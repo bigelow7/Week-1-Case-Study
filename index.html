@@ -10,11 +10,11 @@
     --navy-dark:#001A38;
     --navy-light:#0B4A8C;
     --sky:#4298B5;
-    --gold:#5f6f72;
+    --gold:#FFB800;
     --bg:#F4F6F9;
     --card:#FFFFFF;
     --text:#1B2430;
-    --muted:#3d3735;
+    --muted:#5B6673;
     --border:#DCE3EC;
     --good:#1E7A46;
     --radius:12px;
@@ -226,7 +226,7 @@
   .course-card .cname{font-weight:700;margin:2px 0 6px;}
   .course-card .why{color:var(--muted);font-size:.85rem;}
   .placeholder-note{
-    border:1.5px dashed #C9A400;background:#FFF9E6;color:#6B5700;
+    border:1px solid var(--border);background:#F0F5FB;color:var(--muted);
     border-radius:10px;padding:10px 14px;font-size:.82rem;margin-bottom:14px;
   }
   .path-footer-nav{display:flex;justify-content:space-between;gap:12px;margin-top:36px;flex-wrap:wrap;}
@@ -273,19 +273,31 @@
     padding:12px 14px;font-family:inherit;font-size:.92rem;resize:vertical;
   }
   .practice-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
-  .model-answer, .ai-feedback{
+  .model-answer, .feedback-panel{
     margin-top:18px;border-radius:10px;padding:16px 18px;display:none;
   }
   .model-answer{background:#EEF7F0;border:1px solid #BFE3C8;}
-  .model-answer.show, .ai-feedback.show{display:block;}
+  .model-answer.show, .feedback-panel.show{display:block;}
   .model-answer .label{color:var(--good);font-weight:800;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
-  .ai-feedback{background:#FFF9E6;border:1.5px dashed #C9A400;}
-  .ai-feedback .label{color:#6B5700;font-weight:800;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
-  .ai-feedback .spinner{
-    display:inline-block;width:14px;height:14px;border:2px solid #C9A400;border-top-color:transparent;
+  .feedback-panel{background:#EEF3FB;border:1px solid #C7D9EF;}
+  .feedback-panel .label{color:var(--navy);font-weight:800;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
+  .feedback-panel .fb-tagline{color:var(--muted);font-size:.8rem;margin-bottom:12px;}
+  .feedback-panel .spinner{
+    display:inline-block;width:14px;height:14px;border:2px solid var(--navy-light);border-top-color:transparent;
     border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:-2px;
   }
   @keyframes spin{to{transform:rotate(360deg);}}
+  .fb-sub{font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px;}
+  .fb-sub.good{color:var(--good);}
+  .fb-sub.improve{color:#8A5D00;}
+  .feedback-panel ul{margin:0 0 4px;padding-left:20px;}
+  .feedback-panel ul.fb-good li{margin-bottom:6px;}
+  .feedback-panel ul.fb-improve li{margin-bottom:6px;}
+  .feedback-panel .fb-empty{color:var(--muted);font-size:.85rem;}
+  .fb-note{
+    margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);
+    color:var(--muted);font-size:.75rem;
+  }
 
   /* ---------- FOOTER ---------- */
   footer.site{
@@ -302,7 +314,7 @@
 <header class="site">
   <div class="bar">
     <a href="#home" class="brand" onclick="go('home');return false;">
-      </span> IS Career Launchpad
+      <span class="mark">IS</span> IS Career Launchpad
     </a>
     <nav class="main">
       <button data-view="home" onclick="go('home')">Home</button>
@@ -362,9 +374,10 @@ const PATHS = [
     ],
     salary:{figure:'$135,980/yr median (all experience levels)', entry:'~$99K/yr median total pay for entry-level roles (Glassdoor)', growth:'+10% projected job growth, 2025–2035 (much faster than average)', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Software Developers', url:'https://www.bls.gov/ooh/computer-and-information-technology/software-developers.htm', source2:'Glassdoor — Entry Level Software Developer salaries', url2:'https://www.glassdoor.com/Salaries/entry-level-software-developer-salary-SRCH_KO0,30.htm'},
     courses:[
-      {code:'BYU IS Core',name:'Systems Development / Programming course',why:'Directly builds the programming, debugging, and software-lifecycle skills used every day in this role.'},
-      {code:'BYU IS Core',name:'Database Management course',why:'Nearly every application talks to a database — SQL and schema design are core developer skills.'},
-      {code:'BYU IS Core',name:'Systems Analysis & Design course',why:'Teaches how to translate business requirements into a technical design before writing code.'}
+      {code:'IS 403',name:'Principles of Business Programming',why:'Junior Core course teaching programming fundamentals (C#, ASP.NET MVC), algorithms, data structures, and interfaces — the direct on-ramp to writing production code.'},
+      {code:'IS 411',name:'Systems Design and Implementation',why:'Junior Core course covering system architecture, interfaces, application design, testing, and object-oriented development — the later SDLC phases developers live in daily.'},
+      {code:'IS 413',name:'Enterprise Application Development',why:'Junior Core course on client- and server-side programming and web/enterprise application architecture — essentially this job description.'},
+      {code:'IS 537',name:'Data Structures and Algorithms',why:'Core CS fundamentals (efficient data organization, algorithm performance) that show up directly in technical interviews for this role.'}
     ]
   },
   {
@@ -398,9 +411,10 @@ const PATHS = [
     ],
     salary:{figure:'$101,860/yr median (Management Analysts, all experience — closest BLS category)', entry:'~$87,780/yr average for entry-level Business Systems Analyst (Salary.com)', growth:'+10% projected job growth, 2025–2035 (much faster than average)', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Management Analysts', url:'https://www.bls.gov/ooh/business-and-financial/management-analysts.htm', source2:'Salary.com — Entry Level Business Systems Analyst', url2:'https://www.salary.com/research/salary/position/entry-level-business-systems-analyst-salary'},
     courses:[
-      {code:'BYU IS Core',name:'Systems Analysis & Design course',why:'This is the class built specifically for this role — requirements gathering, process modeling, and translating business needs into system specs.'},
-      {code:'BYU IS Core',name:'Business Process Management / Data Management course',why:'Teaches how to map and improve business processes, a core BA deliverable.'},
-      {code:'BYU IS Core',name:'Professional/Communication-focused IS course',why:'Client interviews, facilitation, and documentation are the daily craft of a BA.'}
+      {code:'IS 401',name:'Project Management and Systems Design',why:'Junior Core course built specifically for this role — requirements definition, investigation, planning, and systems design are the daily craft of a BA.'},
+      {code:'IS 402',name:'Database Systems',why:'Junior Core course in SQL and relational data modeling — BAs constantly back recommendations with real data.'},
+      {code:'IS 411',name:'Systems Design and Implementation',why:'Junior Core course on translating requirements into system architecture and interfaces — how a BA\'s documentation becomes a real system.'},
+      {code:'IS 110',name:'Spreadsheet Skills and Business Analysis',why:'Foundational Excel/analysis course — pivot tables and structured analysis are everyday BA tools.'}
     ]
   },
   {
@@ -434,9 +448,10 @@ const PATHS = [
     ],
     salary:{figure:'$120,230/yr median (Data Scientists, all experience — BLS)', entry:'~$63,000/yr median total pay for entry-level Data Analyst (Glassdoor)', growth:'+35% projected job growth, 2025–2035 (much faster than average)', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Data Scientists', url:'https://www.bls.gov/ooh/math/data-scientists.htm', source2:'Glassdoor — Entry Level Data Analyst salaries', url2:'https://www.glassdoor.com/Salaries/entry-level-data-analyst-salary-SRCH_KO0,24.htm'},
     courses:[
-      {code:'BYU IS Core',name:'Database Management course',why:'SQL and relational data modeling are the daily foundation of analyst work.'},
-      {code:'BYU IS Core',name:'Business Intelligence / Data Analytics course',why:'Directly teaches dashboarding, reporting, and translating data into business decisions.'},
-      {code:'BYU IS Core',name:'Statistics / Data-driven decision-making course',why:'Builds the statistical reasoning needed to move from analyst-level to data-scientist-level work.'}
+      {code:'IS 115',name:'Introduction to Data Analytics in Python',why:'First exposure to Python for data work — importing, cleaning, and summarizing data, the foundation everything else builds on.'},
+      {code:'IS 415',name:'Exploratory Data Analysis',why:'Junior Core course using Python/Jupyter for statistics, visualization, and dashboards — directly the analyst day-to-day.'},
+      {code:'IS 455',name:'Predictive AI in Business (Machine Learning Foundations)',why:'Foundational ML/predictive modeling — the natural next step from analyst-level work toward data-scientist-level work.'},
+      {code:'IS 555',name:'Data Science Workflows for Organizations',why:'Covers how real organizations structure and run data science projects end to end, from scoping to deployment.'}
     ]
   },
   {
@@ -470,9 +485,10 @@ const PATHS = [
     ],
     salary:{figure:'$129,180/yr median (Information Security Analysts, all experience — BLS)', entry:'~$99,400/yr average for entry-level Cyber Security Analyst (ZipRecruiter)', growth:'+21% projected job growth, 2025–2035 (much faster than average)', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Information Security Analysts', url:'https://www.bls.gov/ooh/computer-and-information-technology/information-security-analysts.htm', source2:'ZipRecruiter — Entry Level Cyber Security Analyst salary', url2:'https://www.ziprecruiter.com/Salaries/Entry-Level-Cyber-Security-Analyst-Salary'},
     courses:[
-      {code:'BYU IS Core',name:'Business Data Networks / Telecommunications course',why:'Networking fundamentals (TCP/IP, firewalls, protocols) are the technical backbone of security work.'},
-      {code:'BYU IS Core',name:'Cybersecurity / IS Security course',why:'Covers the CIA triad, risk assessment, and security controls directly used in this role.'},
-      {code:'BYU IS Core',name:'Systems Analysis & Design course',why:'Understanding how systems are built helps you understand how they can be attacked.'}
+      {code:'IS 414',name:'Information Systems Security and Controls',why:'Junior Core course covering threat identification, prevention/detection, and core security principles — the foundation of this entire role.'},
+      {code:'IS 404',name:'Information Technology Infrastructure',why:'Junior Core networking course (data communications, LANs/WANs, protocols) — you can\'t secure a network you don\'t understand.'},
+      {code:'IS 560',name:'Information Security Management',why:'Security from a governance/policy angle — risk management and organizational strategy alongside the technical side.'},
+      {code:'IS 567',name:'Cybersecurity and Penetration Testing',why:'Hands-on offensive security — testing systems for vulnerabilities the way a real attacker would.'}
     ]
   },
   {
@@ -506,9 +522,10 @@ const PATHS = [
     ],
     salary:{figure:'$175,140/yr median (Computer & Information Systems Managers, senior — BLS)', entry:'Entry-level/Associate PM & Project Coordinator roles commonly range $55K–$80K/yr, growing quickly with a PMP', growth:'+16% projected job growth, 2025–2035 (much faster than average)', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Computer and Information Systems Managers', url:'https://www.bls.gov/ooh/management/computer-and-information-systems-managers.htm', source2:'Project Management Institute / industry salary surveys (see also PMI.org Salary Survey)', url2:'https://www.pmi.org/'},
     courses:[
-      {code:'BYU IS Core',name:'Project Management course',why:'This is the course built specifically for scope, schedule, budget, and Agile project delivery.'},
-      {code:'BYU IS Core',name:'Systems Analysis & Design course',why:'PMs need to understand how requirements become a technical build to manage it well.'},
-      {code:'BYU IS Core',name:'Business Communication / Leadership-focused course',why:'Stakeholder communication and team leadership are the daily craft of this role.'}
+      {code:'IS 401',name:'Project Management and Systems Design',why:'Junior Core course built specifically for this role — project management, planning, and requirements definition across the systems development life cycle.'},
+      {code:'IS 411',name:'Systems Design and Implementation',why:'Junior Core course on architecture, testing, and integration — PMs need to understand how requirements become a real technical build to manage it well.'},
+      {code:'IS 402',name:'Database Systems',why:'Junior Core data fundamentals — enough technical fluency to follow what the dev team is actually building.'},
+      {code:'IS 582',name:'Tech Strategy and Leadership',why:'Strategic decision-making and leadership specifically inside technology organizations.'}
     ]
   },
   {
@@ -542,9 +559,10 @@ const PATHS = [
     ],
     salary:{figure:'$99,520/yr median for Web & Digital Interface Designers (closest BLS category)', entry:'~$127K/yr median total pay for entry-level Product Manager; entry UX design roles commonly $65K–$90K/yr (Glassdoor)', growth:'+5% projected growth for design roles; product management growing faster than average across tech broadly', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Web Developers and Digital Designers', url:'https://www.bls.gov/ooh/computer-and-information-technology/web-developers.htm', source2:'Glassdoor — Entry Level Product Manager salaries', url2:'https://www.glassdoor.com/Salaries/entry-level-product-manager-salary-SRCH_KO0,27.htm'},
     courses:[
-      {code:'BYU IS Core',name:'Systems Analysis & Design course',why:'Requirements gathering and user-centered design thinking directly transfer to UX and product work.'},
-      {code:'BYU IS Core',name:'Human-Computer Interaction / UX-focused elective',why:'If offered in the IS elective track, this is the most direct preparation for a design-focused role.'},
-      {code:'BYU IS Core',name:'Business Intelligence / Data Analytics course',why:'Product managers constantly use usage data and metrics to prioritize the roadmap.'}
+      {code:'IS 401',name:'Project Management and Systems Design',why:'Junior Core course in requirements gathering and systems design — the user-centered thinking that underlies both UX and product work.'},
+      {code:'IS 551',name:'User Experience Design and Technical Leadership',why:'The most direct match available — UX design principles paired with the technical leadership PMs also need.'},
+      {code:'IS 562',name:'Information Systems Product Management',why:'Product management specifically for IS/tech products — roadmapping, prioritization, and cross-functional leadership.'},
+      {code:'IS 590R',name:'User-Centered Interface Design',why:'A variable-topics seminar focused specifically on designing interfaces around real user needs and usability.'}
     ]
   },
   {
@@ -578,9 +596,10 @@ const PATHS = [
     ],
     salary:{figure:'$101,526/yr average (all experience — Payscale, ERP Consultant)', entry:'~$72,764/yr average total comp for entry-level ERP Consultant (Payscale)', growth:'Consistently strong demand tied to ERP modernization and cloud-migration projects across nearly every large industry', source:'Payscale — ERP Consultant Salary', url:'https://www.payscale.com/research/US/Job=ERP_Consultant/Salary', source2:'', url2:''},
     courses:[
-      {code:'BYU IS Core',name:'Enterprise Systems / ERP course (e.g., SAP-focused course)',why:'Direct, hands-on exposure to how a real ERP platform is configured is the single best preparation for this path.'},
-      {code:'BYU IS Core',name:'Business Process Management course',why:'ERP consulting is fundamentally about mapping and re-engineering business processes.'},
-      {code:'BYU IS Core',name:'Database Management course',why:'Data migration and reporting inside an ERP both rely on solid data-modeling fundamentals.'}
+      {code:'IS 401',name:'Project Management and Systems Design',why:'Junior Core course in requirements gathering and systems design — ERP consulting is fundamentally about mapping business process to system configuration.'},
+      {code:'IS 402',name:'Database Systems',why:'Junior Core data fundamentals — data migration and reporting inside an ERP both rely on solid data-modeling skills.'},
+      {code:'IS 531',name:'Enterprise Infrastructure',why:'Covers the architecture and management of enterprise-scale IT systems — the environment ERP platforms run in.'},
+      {code:'IS 566',name:'Advanced Database Management',why:'Deeper database administration and performance tuning — directly useful once you\'re configuring a real ERP\'s data layer.'}
     ]
   },
   {
@@ -614,9 +633,10 @@ const PATHS = [
     ],
     salary:{figure:'$99,130/yr median (Network & Computer Systems Administrators, closest BLS category)', entry:'~$101,337/yr average for entry-level Cloud Engineer (Payscale, via DataCamp)', growth:'Cloud-specific roles are growing quickly even where traditional on-prem admin roles are flat to declining', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Network and Computer Systems Administrators', url:'https://www.bls.gov/ooh/computer-and-information-technology/network-and-computer-systems-administrators.htm', source2:'DataCamp — Cloud Engineer Salary Guide', url2:'https://www.datacamp.com/blog/cloud-engineer-salary'},
     courses:[
-      {code:'BYU IS Core',name:'Business Data Networks / Telecommunications course',why:'Networking fundamentals (subnets, DNS, routing) underpin nearly everything in cloud infrastructure.'},
-      {code:'BYU IS Core',name:'Cybersecurity / IS Security course',why:'Securing cloud environments (access control, encryption) is a core infrastructure responsibility.'},
-      {code:'BYU IS Core',name:'Database Management course',why:'Provisioning and maintaining database infrastructure is a common cloud-engineer responsibility.'}
+      {code:'IS 404',name:'Information Technology Infrastructure',why:'Junior Core networking course (data communications, LANs/WANs, protocols) — the fundamentals underneath every cloud environment.'},
+      {code:'IS 414',name:'Information Systems Security and Controls',why:'Junior Core security course — securing cloud environments (access control, encryption) is a core infrastructure responsibility.'},
+      {code:'IS 531',name:'Enterprise Infrastructure',why:'Architecture and management of enterprise-scale IT infrastructure — servers, networks, and systems at real scale.'},
+      {code:'IS 532',name:'Cloud Engineering and DevOps',why:'The most direct match available — cloud platform engineering, automation, and infrastructure-as-code, this job\'s exact toolkit.'}
     ]
   }
 ];
@@ -637,11 +657,14 @@ const INTERVIEW = {
     ],
     technical:[
       {q:'What is an abstract class and why would you use it?', source:'Reported entry-level SWE interview question — General Dynamics Mission Systems (via Glassdoor)',
-       model:'An abstract class is a class that can\'t be instantiated directly and is meant to be extended by subclasses — it can define some shared behavior while leaving other methods abstract (unimplemented) for subclasses to fill in. You\'d use one when several related classes share common structure or behavior but each needs its own specific implementation of certain methods — for example, a "Shape" abstract class with an abstract `area()` method, extended by `Circle` and `Rectangle`.'},
+       model:'An abstract class is a class that can\'t be instantiated directly and is meant to be extended by subclasses — it can define some shared behavior while leaving other methods abstract (unimplemented) for subclasses to fill in. You\'d use one when several related classes share common structure or behavior but each needs its own specific implementation of certain methods — for example, a "Shape" abstract class with an abstract `area()` method, extended by `Circle` and `Rectangle`.',
+       keyTerms:['abstract','subclass','instantiate','shared behavior','implement']},
       {q:'Explain the difference between an array and a linked list — what are the trade-offs?', source:'Standard entry-level CS fundamentals question, consistently reported across entry-level software engineer interview aggregates',
-       model:'An array stores elements in contiguous memory with O(1) index access, but inserting/deleting in the middle is O(n) because elements have to shift. A linked list stores elements as nodes with pointers to the next node — insertion/deletion is O(1) once you have a reference to the location, but there\'s no O(1) random access; you have to traverse from the head. Use an array when you need fast lookups and know the size roughly in advance; use a linked list when you\'re doing frequent inserts/deletes and don\'t need random access.'},
+       model:'An array stores elements in contiguous memory with O(1) index access, but inserting/deleting in the middle is O(n) because elements have to shift. A linked list stores elements as nodes with pointers to the next node — insertion/deletion is O(1) once you have a reference to the location, but there\'s no O(1) random access; you have to traverse from the head. Use an array when you need fast lookups and know the size roughly in advance; use a linked list when you\'re doing frequent inserts/deletes and don\'t need random access.',
+       keyTerms:['contiguous','pointer','O(1)','insert','random access']},
       {q:'Walk me through how you\'d debug a program that\'s producing the wrong output.', source:'Standard entry-level technical-screen question, consistently reported across entry-level software engineer interview aggregates',
-       model:'First, reproduce the bug reliably so you have a consistent test case. Then narrow the problem — add print statements or use a debugger to check intermediate values and isolate which function or line first produces incorrect data, rather than guessing. Once isolated, form a hypothesis about the cause, test it, and fix the root cause rather than patching the symptom. Finally, add a test case that would have caught this bug so it doesn\'t silently regress later.'}
+       model:'First, reproduce the bug reliably so you have a consistent test case. Then narrow the problem — add print statements or use a debugger to check intermediate values and isolate which function or line first produces incorrect data, rather than guessing. Once isolated, form a hypothesis about the cause, test it, and fix the root cause rather than patching the symptom. Finally, add a test case that would have caught this bug so it doesn\'t silently regress later.',
+       keyTerms:['reproduce','isolate','hypothesis','root cause','test case']}
     ]
   },
   ba:{
@@ -655,11 +678,14 @@ const INTERVIEW = {
     ],
     technical:[
       {q:'Given the death rates for 5 different customer segment groups, which should we include in our portfolio to break even? Graph our profits as we add groups.', source:'Reported business analyst interview question, Capital One-style analytical case question (via Glassdoor)',
-       model:'Talk through your process out loud even without perfect numbers: rank the segments by expected profitability (revenue minus expected losses/costs), then add them one at a time in order of profitability and track cumulative profit — the "break-even" point is where cumulative profit crosses zero. Sketch the shape of the curve (rising, then flattening or dipping as you add riskier segments) and explain what business decision that curve implies. Interviewers are testing structured thinking, not a single correct number.'},
+       model:'Talk through your process out loud even without perfect numbers: rank the segments by expected profitability (revenue minus expected losses/costs), then add them one at a time in order of profitability and track cumulative profit — the "break-even" point is where cumulative profit crosses zero. Sketch the shape of the curve (rising, then flattening or dipping as you add riskier segments) and explain what business decision that curve implies. Interviewers are testing structured thinking, not a single correct number.',
+       keyTerms:['rank','profit','cumulative','break-even','segment']},
       {q:'What has your experience been with presenting and handling large datasets?', source:'Reported business analyst interview question (via Glassdoor)',
-       model:'Give a concrete example with tools named: "In my Database Management class I worked with a dataset of about 50,000 rows in SQL and Excel — I used pivot tables and a few SQL aggregate queries to summarize it, then built a simple dashboard so non-technical stakeholders could explore the findings without seeing raw rows." If your experience is limited, be honest and pair it with how you\'d approach a large dataset methodically (clean first, aggregate, then visualize).'},
+       model:'Give a concrete example with tools named: "In my Database Management class I worked with a dataset of about 50,000 rows in SQL and Excel — I used pivot tables and a few SQL aggregate queries to summarize it, then built a simple dashboard so non-technical stakeholders could explore the findings without seeing raw rows." If your experience is limited, be honest and pair it with how you\'d approach a large dataset methodically (clean first, aggregate, then visualize).',
+       keyTerms:['SQL','Excel','pivot table','dashboard','aggregate']},
       {q:'Who is a BA? Roles and responsibilities of a BA — tools and diagrams used.', source:'Reported business analyst interview question (via Glassdoor)',
-       model:'A business analyst bridges business needs and technical solutions — gathering requirements, documenting current and future-state processes, and validating that what gets built actually solves the business problem. Name concrete deliverables and tools: process flow diagrams, use-case diagrams, requirements documents, and tools like Visio/Lucidchart, Jira, and SQL/Excel for supporting data.'}
+       model:'A business analyst bridges business needs and technical solutions — gathering requirements, documenting current and future-state processes, and validating that what gets built actually solves the business problem. Name concrete deliverables and tools: process flow diagrams, use-case diagrams, requirements documents, and tools like Visio/Lucidchart, Jira, and SQL/Excel for supporting data.',
+       keyTerms:['requirements','process','stakeholder','diagram','translate']}
     ]
   },
   da:{
@@ -673,11 +699,14 @@ const INTERVIEW = {
     ],
     technical:[
       {q:'Write a SQL query to select the 2nd highest salary in a department.', source:'Real SQL interview question reported for data analyst roles (InterviewQuery)',
-       model:'A clean approach: `SELECT MAX(salary) FROM employees WHERE department = \'X\' AND salary < (SELECT MAX(salary) FROM employees WHERE department = \'X\')`. Alternatively, use `DENSE_RANK()` or `OFFSET/FETCH` for a more general "Nth highest" solution. Explain that you\'d watch for duplicate salary values, which is why DENSE_RANK is often preferred over ROW_NUMBER for this kind of ranking question.'},
+       model:'A clean approach: `SELECT MAX(salary) FROM employees WHERE department = \'X\' AND salary < (SELECT MAX(salary) FROM employees WHERE department = \'X\')`. Alternatively, use `DENSE_RANK()` or `OFFSET/FETCH` for a more general "Nth highest" solution. Explain that you\'d watch for duplicate salary values, which is why DENSE_RANK is often preferred over ROW_NUMBER for this kind of ranking question.',
+       keyTerms:['subquery','MAX','DENSE_RANK','duplicate']},
       {q:'Write a query to find duplicate customer emails in a table.', source:'Real SQL interview question reported for data analyst roles (InterviewQuery)',
-       model:'`SELECT email, COUNT(*) FROM customers GROUP BY email HAVING COUNT(*) > 1;` — group by the column you\'re checking for duplicates, then filter groups with more than one row using HAVING (since WHERE can\'t filter on an aggregate). Mention that in practice you\'d also check for near-duplicates (case differences, trailing spaces) using something like `LOWER(TRIM(email))`.'},
+       model:'`SELECT email, COUNT(*) FROM customers GROUP BY email HAVING COUNT(*) > 1;` — group by the column you\'re checking for duplicates, then filter groups with more than one row using HAVING (since WHERE can\'t filter on an aggregate). Mention that in practice you\'d also check for near-duplicates (case differences, trailing spaces) using something like `LOWER(TRIM(email))`.',
+       keyTerms:['GROUP BY','HAVING','COUNT','duplicate']},
       {q:'Write a query to find the month-over-month change in revenue for a given year.', source:'Real SQL interview question reported for data analyst roles (InterviewQuery)',
-       model:'Aggregate revenue by month first, then use a window function to compare each month to the previous one: `SELECT month, revenue, revenue - LAG(revenue) OVER (ORDER BY month) AS mom_change FROM monthly_revenue`. Explain LAG() in plain language — it grabs the previous row\'s value so you can compute the difference — since being able to explain a window function, not just write it, is what separates a strong answer.'}
+       model:'Aggregate revenue by month first, then use a window function to compare each month to the previous one: `SELECT month, revenue, revenue - LAG(revenue) OVER (ORDER BY month) AS mom_change FROM monthly_revenue`. Explain LAG() in plain language — it grabs the previous row\'s value so you can compute the difference — since being able to explain a window function, not just write it, is what separates a strong answer.',
+       keyTerms:['LAG','window function','GROUP BY','month']}
     ]
   },
   cyber:{
@@ -691,11 +720,14 @@ const INTERVIEW = {
     ],
     technical:[
       {q:'What sort of anomalies would you look for to identify a compromised system?', source:'Reported cybersecurity analyst interview question (via Glassdoor)',
-       model:'Talk through categories: unusual outbound network traffic (especially to unfamiliar IPs/ports), unexpected new user accounts or privilege escalations, spikes in CPU/disk usage with no clear cause, disabled security tools or logging, and unfamiliar processes or scheduled tasks running. Mention that you\'d correlate multiple weak signals rather than relying on any single indicator, since real attackers try to blend in.'},
+       model:'Talk through categories: unusual outbound network traffic (especially to unfamiliar IPs/ports), unexpected new user accounts or privilege escalations, spikes in CPU/disk usage with no clear cause, disabled security tools or logging, and unfamiliar processes or scheduled tasks running. Mention that you\'d correlate multiple weak signals rather than relying on any single indicator, since real attackers try to blend in.',
+       keyTerms:['outbound traffic','privilege escalation','logging','process','account']},
       {q:'What is the CIA Triad?', source:'Reported cybersecurity analyst interview question (via Glassdoor)',
-       model:'Confidentiality, Integrity, and Availability — the three core goals of information security. Confidentiality means only authorized people can access data; integrity means data isn\'t improperly modified; availability means systems and data are accessible when needed. Give a one-line example of a threat to each — e.g., a data breach threatens confidentiality, tampering threatens integrity, and a DDoS attack threatens availability — to show you understand it beyond the definition.'},
+       model:'Confidentiality, Integrity, and Availability — the three core goals of information security. Confidentiality means only authorized people can access data; integrity means data isn\'t improperly modified; availability means systems and data are accessible when needed. Give a one-line example of a threat to each — e.g., a data breach threatens confidentiality, tampering threatens integrity, and a DDoS attack threatens availability — to show you understand it beyond the definition.',
+       keyTerms:['confidentiality','integrity','availability']},
       {q:'What is the difference between UDP and TCP?', source:'Reported cybersecurity/cloud interview question (via Glassdoor)',
-       model:'TCP is connection-oriented and reliable — it establishes a handshake, guarantees delivery and ordering, and retransmits lost packets, which makes it slower but accurate (used for things like web browsing and email). UDP is connectionless and doesn\'t guarantee delivery or order, but it\'s faster with less overhead, which is why it\'s used for things like video streaming or DNS lookups where speed matters more than perfect reliability.'}
+       model:'TCP is connection-oriented and reliable — it establishes a handshake, guarantees delivery and ordering, and retransmits lost packets, which makes it slower but accurate (used for things like web browsing and email). UDP is connectionless and doesn\'t guarantee delivery or order, but it\'s faster with less overhead, which is why it\'s used for things like video streaming or DNS lookups where speed matters more than perfect reliability.',
+       keyTerms:['TCP','UDP','reliable','handshake','connectionless']}
     ]
   },
   pm:{
@@ -709,11 +741,14 @@ const INTERVIEW = {
     ],
     technical:[
       {q:'How do you monitor a project to see if it\'s on track?', source:'Reported entry-level/associate IT project manager interview question',
-       model:'Mention concrete mechanisms, not just "I check in": a maintained timeline/roadmap with milestones, regular status check-ins against that plan, tracking scope/budget/risk explicitly rather than informally, and comparing planned vs. actual progress (e.g., a burndown chart in Agile). The key signal is that you have a repeatable system, not just good intentions.'},
+       model:'Mention concrete mechanisms, not just "I check in": a maintained timeline/roadmap with milestones, regular status check-ins against that plan, tracking scope/budget/risk explicitly rather than informally, and comparing planned vs. actual progress (e.g., a burndown chart in Agile). The key signal is that you have a repeatable system, not just good intentions.',
+       keyTerms:['timeline','milestone','status','scope','risk']},
       {q:'How do you deal with scope creep ("gold plating") in your project?', source:'Reported entry-level/associate IT project manager interview question',
-       model:'Explain a change-control process: any new request gets evaluated against the original scope and goals, its impact on timeline/budget is estimated, and it goes through a lightweight approval step (even informally, "does the sponsor agree this is worth the delay?") rather than being silently absorbed into the plan. This shows you understand that scope creep isn\'t about saying no — it\'s about making trade-offs visible.'},
+       model:'Explain a change-control process: any new request gets evaluated against the original scope and goals, its impact on timeline/budget is estimated, and it goes through a lightweight approval step (even informally, "does the sponsor agree this is worth the delay?") rather than being silently absorbed into the plan. This shows you understand that scope creep isn\'t about saying no — it\'s about making trade-offs visible.',
+       keyTerms:['scope','change control','approval','budget','timeline']},
       {q:'Do you have budget management experience?', source:'Reported entry-level/associate IT project manager interview question',
-       model:'If you don\'t have formal budget experience, connect it to something adjacent and be honest: "I haven\'t managed a formal budget, but in a class project I tracked our team\'s time budget against our timeline and flagged when a task was taking longer than planned so we could reprioritize — the underlying skill of tracking a limited resource against a plan is the same." Don\'t fabricate experience you don\'t have.'}
+       model:'If you don\'t have formal budget experience, connect it to something adjacent and be honest: "I haven\'t managed a formal budget, but in a class project I tracked our team\'s time budget against our timeline and flagged when a task was taking longer than planned so we could reprioritize — the underlying skill of tracking a limited resource against a plan is the same." Don\'t fabricate experience you don\'t have.',
+       keyTerms:['budget','track','resource','prioritize']}
     ]
   },
   ux:{
@@ -727,11 +762,14 @@ const INTERVIEW = {
     ],
     technical:[
       {q:'Walk me through your design process for a portfolio project — what was the outcome, and what would you do differently?', source:'Reported UX portfolio-review interview question (Exponent)',
-       model:'Structure it: problem → research (who did you talk to, what did you learn) → key design decisions and why → outcome (even a qualitative one, like "test users completed the task 40% faster") → what you\'d change with more time or data. Naming a genuine limitation or change shows maturity — interviewers are wary of candidates who claim every decision was perfect.'},
+       model:'Structure it: problem → research (who did you talk to, what did you learn) → key design decisions and why → outcome (even a qualitative one, like "test users completed the task 40% faster") → what you\'d change with more time or data. Naming a genuine limitation or change shows maturity — interviewers are wary of candidates who claim every decision was perfect.',
+       keyTerms:['research','user','outcome','iterate','metric']},
       {q:'Open [a familiar app] and tell me what could be improved about its design.', source:'Reported UX app-critique interview question (Exponent)',
-       model:'Use a simple framework out loud: first state the app\'s likely goal for this screen, then identify one specific friction point (not five vague ones), explain why it\'s a problem (using a UX principle — e.g., unclear information hierarchy, too many choices at once), and propose one concrete alternative. Depth on one issue beats a shallow list of ten.'},
+       model:'Use a simple framework out loud: first state the app\'s likely goal for this screen, then identify one specific friction point (not five vague ones), explain why it\'s a problem (using a UX principle — e.g., unclear information hierarchy, too many choices at once), and propose one concrete alternative. Depth on one issue beats a shallow list of ten.',
+       keyTerms:['hierarchy','friction','usability','navigation']},
       {q:'How would you decide whether a new feature is worth building?', source:'Reported product manager (product-sense) interview question, reflected across PM interview guides',
-       model:'Lay out a lightweight framework: how many users would this help and how much (reach × impact), how does it tie to a business goal, what\'s the cost/complexity to build, and how would you know afterward whether it worked (a specific success metric). Naming a metric you\'d track post-launch is what separates a strong answer from a vague one.'}
+       model:'Lay out a lightweight framework: how many users would this help and how much (reach × impact), how does it tie to a business goal, what\'s the cost/complexity to build, and how would you know afterward whether it worked (a specific success metric). Naming a metric you\'d track post-launch is what separates a strong answer from a vague one.',
+       keyTerms:['reach','impact','metric','cost','priorit']}
     ]
   },
   erp:{
@@ -745,11 +783,14 @@ const INTERVIEW = {
     ],
     technical:[
       {q:'What experience do you have with SAP (or another ERP) systems, and which modules are you most familiar with?', source:'Reported SAP consultant interview question',
-       model:'If you\'ve taken an ERP-focused course, name the specific modules you touched (e.g., Finance/Controlling, Materials Management, Sales & Distribution) and one concrete task you did in each — configuring a workflow, running a transaction, building a report. If your exposure is limited, be honest and pivot to related coursework (databases, business process mapping) plus a concrete plan to build hands-on skills (e.g., SAP Learning Hub, Salesforce Trailhead).'},
+       model:'If you\'ve taken an ERP-focused course, name the specific modules you touched (e.g., Finance/Controlling, Materials Management, Sales & Distribution) and one concrete task you did in each — configuring a workflow, running a transaction, building a report. If your exposure is limited, be honest and pivot to related coursework (databases, business process mapping) plus a concrete plan to build hands-on skills (e.g., SAP Learning Hub, Salesforce Trailhead).',
+       keyTerms:['module','configur','finance','implementation']},
       {q:'How would you go about configuring a new system to match a business requirement?', source:'Reported SAP/ERP consultant interview question',
-       model:'Walk through a process: first fully understand the business requirement and the current process (don\'t configure from an assumption), map it to the system\'s available configuration options, document the planned configuration before making changes, implement in a test/sandbox environment first, then test against the original requirement before moving to production. This shows structured thinking even without deep platform-specific knowledge.'},
+       model:'Walk through a process: first fully understand the business requirement and the current process (don\'t configure from an assumption), map it to the system\'s available configuration options, document the planned configuration before making changes, implement in a test/sandbox environment first, then test against the original requirement before moving to production. This shows structured thinking even without deep platform-specific knowledge.',
+       keyTerms:['requirement','configur','test','sandbox','document']},
       {q:'What is your experience with data migration in an ERP system?', source:'Reported SAP consultant interview question',
-       model:'If you lack direct experience, connect it to database/data-cleaning coursework: migrating data means extracting from the old system, cleaning and mapping it to the new system\'s data structure/format, and validating record counts and key fields after load. Naming validation specifically (checking the migration actually worked, not just that it ran) is a detail that signals real understanding.'}
+       model:'If you lack direct experience, connect it to database/data-cleaning coursework: migrating data means extracting from the old system, cleaning and mapping it to the new system\'s data structure/format, and validating record counts and key fields after load. Naming validation specifically (checking the migration actually worked, not just that it ran) is a detail that signals real understanding.',
+       keyTerms:['migrat','extract','validate','map','clean']}
     ]
   },
   cloud:{
@@ -763,11 +804,14 @@ const INTERVIEW = {
     ],
     technical:[
       {q:'What does an AWS Availability Zone signify, and why does it matter?', source:'Reported AWS Cloud Support Engineer interview question',
-       model:'An Availability Zone is one or more physically separate data centers within an AWS Region, each with independent power, cooling, and networking. It matters because deploying across multiple AZs protects an application from a single data-center failure — if one AZ goes down, traffic can fail over to another, which is the core idea behind high availability in the cloud.'},
+       model:'An Availability Zone is one or more physically separate data centers within an AWS Region, each with independent power, cooling, and networking. It matters because deploying across multiple AZs protects an application from a single data-center failure — if one AZ goes down, traffic can fail over to another, which is the core idea behind high availability in the cloud.',
+       keyTerms:['availability zone','region','data center','redundan','failover']},
       {q:'What is the difference between a private and public subnet?', source:'Reported AWS Cloud Support Engineer interview question',
-       model:'A public subnet has a route to an internet gateway, so resources in it can be reached directly from the internet (e.g., a public-facing web server). A private subnet has no direct route to the internet — resources there (like a database) are shielded from direct external access and typically reach the internet, if needed, through a NAT gateway in a public subnet. This separation is a basic but important security pattern.'},
+       model:'A public subnet has a route to an internet gateway, so resources in it can be reached directly from the internet (e.g., a public-facing web server). A private subnet has no direct route to the internet — resources there (like a database) are shielded from direct external access and typically reach the internet, if needed, through a NAT gateway in a public subnet. This separation is a basic but important security pattern.',
+       keyTerms:['subnet','public','private','internet gateway','NAT']},
       {q:'Why would you use TCP instead of another protocol like UDP?', source:'Reported cloud/networking interview question',
-       model:'TCP guarantees reliable, ordered delivery through a handshake and retransmission of lost packets, which matters when correctness is more important than speed — file transfers, web requests, database connections. You\'d choose UDP instead when speed and low overhead matter more than guaranteed delivery, like video streaming or real-time gaming, where a dropped packet is less costly than the delay of retransmitting it.'}
+       model:'TCP guarantees reliable, ordered delivery through a handshake and retransmission of lost packets, which matters when correctness is more important than speed — file transfers, web requests, database connections. You\'d choose UDP instead when speed and low overhead matter more than guaranteed delivery, like video streaming or real-time gaming, where a dropped packet is less costly than the delay of retransmitting it.',
+       keyTerms:['TCP','UDP','reliable','handshake','retransmit']}
     ]
   }
 };
@@ -892,19 +936,14 @@ function render(){
 function renderHome(){
   return `
   <div class="hero">
-    
-    <div class="wrap" style="text-align:center; margin:10px auto;">
+    <div class="wrap">
       <h1>Find your IS career path &mdash; and walk into your interview ready.</h1>
-      <div style="max-width:700px; margin:0 auto; text-align:center;">
-        <p>
-        Built by IS students, for IS students. Explore real career paths in Information Systems, see exactly which BYU IS Junior Core classes prepare you for each one, and practice real interview questions before your next internship or job interview.
-        </p>
-
-        <div class="cta-row" style="display:flex; justify-content:center; gap:20px; margin-top:10px;">
-        <button class="btn" onclick="go('quiz')">Take the 2-Minute Quiz →</button>
+      <p>Built by IS students, for IS students. Explore real career paths in Information Systems, see exactly which BYU IS Junior Core classes prepare you for each one, and practice real interview questions before your next internship or job interview.</p>
+      <div class="cta-row">
+        <button class="btn" onclick="go('quiz')">Take the 2-Minute Quiz &rarr;</button>
         <a class="btn secondary" href="#paths" onclick="go('paths');return false;">Browse All Career Paths</a>
-        </div>
-      </div> 
+      </div>
+    </div>
   </div>
   <div class="wrap">
     <div class="home-grid">
@@ -922,18 +961,16 @@ function renderHome(){
       </div>
     </div>
     <div class="feature-card" style="margin-top:20px;">
-  <div class="num">?</div>
-  <h3>Not sure where to start?</h3>
-  <p>Take our 10‑question quiz about how you like to work and think — we'll match you to the IS career path that fits you best.</p>
-
-  <button class="btn ghost small" onclick="go('quiz')">
-    Take the Quiz
-  </button>
-</div>
-
-
+      <div class="num">?</div>
+      <h3>Not sure where to start?</h3>
+      <p>Take our 10-question quiz about how you like to work and think &mdash; we'll match you to the IS career path that fits you best.</p>
+      <div class="path-preview-grid">
+        ${PATHS.map(p=>`<button class="path-chip" onclick="go('path','${p.id}')">${p.short}</button>`).join('')}
+      </div>
+    </div>
+  </div>
   `;
-} 
+}
 
 /* ---------------- QUIZ ---------------- */
 function renderQuiz(){
@@ -1133,7 +1170,7 @@ function renderPathDetail(id){
 
       <div class="path-section">
         <h3>&#127979; BYU IS Junior Core Classes That Prepare You</h3>
-        <div class="placeholder-note">Course names below are placeholders pending the final BYU IS Junior Core course list &mdash; easy to edit in the <code>PATHS</code> data array at the top of the script. Swap in real course numbers (e.g., "IS 403") once confirmed.</div>
+        <div class="placeholder-note">Pulled from BYU's official Information Systems course list and catalog descriptions (see <code>byu-is-course-descriptions.md</code>). Easy to edit in the <code>PATHS</code> data array at the top of the script if requirements change.</div>
         <div class="course-grid">
           ${p.courses.map(c=>`
             <div class="course-card">
@@ -1230,16 +1267,17 @@ function openQuestion(i){
       <label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:6px;">Your answer:</label>
       <textarea class="answer-box" id="answerBox" placeholder="Type your answer here, like you're actually in the interview..."></textarea>
       <div class="practice-actions">
-        <button class="btn small" onclick="revealModel()">Show Model Answer</button>
-        <button class="btn ghost small" onclick="requestAiFeedback()">Get AI Feedback (Beta)</button>
+        <button class="btn small" onclick="getFeedback(${i})">Get Feedback on My Answer</button>
+        <button class="btn ghost small" onclick="revealModel()">Show Model Answer</button>
+      </div>
+      <div class="feedback-panel" id="feedbackPanel">
+        <div class="label">Feedback on Your Answer</div>
+        <div class="fb-tagline">Instant, rule-based coaching &mdash; not a generic response.</div>
+        <div id="feedbackBody"></div>
       </div>
       <div class="model-answer" id="modelAnswer">
         <div class="label">Strong Model Answer</div>
         <div>${q.model}</div>
-      </div>
-      <div class="ai-feedback" id="aiFeedback">
-        <div class="label">AI Feedback</div>
-        <div id="aiFeedbackBody"></div>
       </div>
     </div>
   `;
@@ -1247,26 +1285,125 @@ function openQuestion(i){
 function revealModel(){
   document.getElementById('modelAnswer').classList.add('show');
 }
-function requestAiFeedback(){
+
+/* =========================================================================
+   FEEDBACK ENGINE
+   This runs entirely in the browser — no external AI call, no API key,
+   nothing to configure. It's a deterministic, rule-based coach (similar
+   in spirit to the quiz scoring above) so the Interview Prep module gives
+   real, specific, actionable feedback out of the box, with or without an
+   AI model ever getting wired in.
+
+   Behavioral questions are scored against the STAR framework (Situation,
+   Action, Result) using pattern matching. Technical questions are scored
+   against a curated `keyTerms` list per question (see the INTERVIEW data
+   above) plus a check for concrete examples/reasoning.
+
+   TO SWAP IN A REAL AI MODEL LATER: replace the body of getFeedback()
+   below with a fetch() to your model/API endpoint (passing the question
+   text and `answer`), and render its response instead of calling
+   buildBehavioralFeedback()/buildTechnicalFeedback(). Everything else
+   (the panel, the "Show Model Answer" comparison, the UI) stays the same.
+   ========================================================================= */
+function getFeedback(i){
+  const q = INTERVIEW[currentInterviewPath][currentInterviewType][i];
   const box = document.getElementById('answerBox');
-  const fb = document.getElementById('aiFeedback');
-  const body = document.getElementById('aiFeedbackBody');
-  fb.classList.add('show');
-  if(!box.value.trim()){
-    body.innerHTML = 'Write your answer above first, then request feedback.';
+  const panel = document.getElementById('feedbackPanel');
+  const body = document.getElementById('feedbackBody');
+  const answer = box.value.trim();
+  panel.classList.add('show');
+
+  if(!answer){
+    body.innerHTML = '<div class="fb-empty">Write your answer above first, then click "Get Feedback on My Answer."</div>';
     return;
   }
+
   body.innerHTML = '<span class="spinner"></span>Analyzing your answer...';
-  // ---------------------------------------------------------------
-  // PLACEHOLDER: this is where a real AI model call gets wired in.
-  // Replace this setTimeout block with a fetch() to your model/API
-  // endpoint, passing `box.value` (the user's answer) and the
-  // question text, and rendering the model's real response into
-  // `body.innerHTML` instead of this placeholder message.
-  // ---------------------------------------------------------------
   setTimeout(()=>{
-    body.innerHTML = `<em>This is a placeholder.</em> In the full version, an AI model will read your answer above and give specific, actionable feedback here (structure, clarity, what to add, what to cut) &mdash; the same way it would if a person were coaching you. For now, compare your answer to the model answer using "Show Model Answer."`;
-  }, 900);
+    const result = currentInterviewType==='behavioral'
+      ? buildBehavioralFeedback(answer)
+      : buildTechnicalFeedback(answer, q);
+    body.innerHTML = renderFeedback(result);
+  }, 450);
+}
+
+function renderFeedback(result){
+  const goodHtml = result.strengths.length
+    ? `<div class="fb-sub good">&#10003; What's working</div><ul class="fb-good">${result.strengths.map(s=>`<li>${s}</li>`).join('')}</ul>`
+    : '';
+  const improveHtml = result.improvements.length
+    ? `<div class="fb-sub improve">&#9998; What to improve</div><ul class="fb-improve">${result.improvements.map(s=>`<li>${s}</li>`).join('')}</ul>`
+    : '<div class="fb-sub improve">&#9998; What to improve</div><ul class="fb-improve"><li>Nothing major &mdash; this hits the key elements interviewers look for. Compare it against the model answer for extra polish.</li></ul>';
+  return `
+    ${goodHtml}
+    ${improveHtml}
+    <div class="fb-note">${result.wordCount} words &middot; feedback generated by a rule-based checker built into this page (see <code>getFeedback()</code> in the source) &mdash; not an AI model.</div>
+  `;
+}
+
+function buildBehavioralFeedback(text){
+  const lower = text.toLowerCase();
+  const wordCount = text.split(/\s+/).filter(Boolean).length;
+  const strengths = [];
+  const improvements = [];
+
+  if(wordCount < 25){
+    improvements.push(`Your answer is short (${wordCount} words). Behavioral questions reward a real, specific story &mdash; aim for at least 4&ndash;6 sentences with a concrete example.`);
+  } else if(wordCount > 250){
+    improvements.push(`Your answer is quite long (${wordCount} words). In a live interview this risks losing the interviewer &mdash; try to tighten it to the most important beats of the story.`);
+  } else {
+    strengths.push(`Good length (${wordCount} words) &mdash; enough room to tell a real story without rambling.`);
+  }
+
+  const hasSituation = /\b(when|time|situation|project|during|while|in my|at my|last (year|semester|summer)|recently)\b/i.test(text);
+  if(hasSituation) strengths.push('You set up a specific situation or project as context &mdash; that\'s the "Situation" interviewers need before they can judge your response.');
+  else improvements.push('Open with a specific situation or project (a real "when this happened") so the interviewer has context before you get to what you did.');
+
+  const iActionMatches = (text.match(/\bI\s+\w+ed\b/g) || []).length + (text.match(/\bI\s+(did|led|built|made|took|asked|decided|created|started|helped|proposed|organized|reached out|talked|changed|broke|owned)\b/gi) || []).length;
+  if(iActionMatches >= 2) strengths.push('You described your own specific actions ("I...") rather than only what "the team" did &mdash; that\'s exactly what interviewers listen for in the "Action" part of the story.');
+  else improvements.push('Make sure the story centers on what YOU specifically did (use "I," not just "we" or "the team") &mdash; interviewers are evaluating your individual judgment and actions.');
+
+  const hasResult = /\b(result|resulted|led to|so that|which meant|ended up|we (submitted|finished|shipped|delivered|improved|increased|reduced|fixed|launched)|%|percent|successfully|on time|under budget|afterward|since then)\b/i.test(text);
+  if(hasResult) strengths.push('You included a concrete outcome or result &mdash; that\'s the piece that makes a behavioral answer memorable instead of generic.');
+  else improvements.push('Add a clear result at the end: what actually happened because of what you did? A number, an outcome, or "since then I\'ve..." makes this land much harder.');
+
+  const hasReflection = /\b(learn|learned|realized|since then|now I|going forward|next time)\b/i.test(text);
+  if(!hasReflection && wordCount > 25) improvements.push('Consider closing with a brief takeaway &mdash; what you learned or how it changed your approach. It shows self-awareness beyond just "and then it worked out."');
+
+  return {strengths, improvements, wordCount};
+}
+
+function buildTechnicalFeedback(text, question){
+  const lower = text.toLowerCase();
+  const wordCount = text.split(/\s+/).filter(Boolean).length;
+  const strengths = [];
+  const improvements = [];
+
+  if(wordCount < 15){
+    improvements.push(`Your answer is quite brief (${wordCount} words). Technical answers are stronger when you explain your reasoning out loud, not just state a conclusion.`);
+  } else {
+    strengths.push(`Good depth (${wordCount} words) &mdash; enough to show your reasoning, not just a one-line answer.`);
+  }
+
+  const terms = question.keyTerms || [];
+  const matched = terms.filter(t => lower.includes(t.toLowerCase()));
+  const missing = terms.filter(t => !lower.includes(t.toLowerCase()));
+  if(matched.length){
+    strengths.push(`You hit on some of the core concepts interviewers listen for here: ${matched.join(', ')}.`);
+  }
+  if(missing.length){
+    improvements.push(`Consider working in: ${missing.join(', ')}. These are concepts a strong answer to this question usually touches &mdash; check the model answer to see how they fit in.`);
+  }
+
+  const hasExample = /\b(for example|for instance|e\.g\.|such as|like when|in my|a case where|specifically)\b/i.test(text);
+  if(hasExample) strengths.push('You grounded your answer with a specific example rather than staying purely abstract &mdash; that\'s a strong signal to interviewers.');
+  else if(wordCount > 15) improvements.push('Try grounding your answer with a specific example or scenario &mdash; abstract explanations are weaker than ones tied to something concrete.');
+
+  const hasReasoning = /\b(because|since|so that|which means|this means|the reason|which allows|which lets)\b/i.test(text);
+  if(hasReasoning) strengths.push('You explained the "why" behind your answer, not just the "what" &mdash; that\'s what separates a strong technical answer from a memorized definition.');
+  else if(wordCount > 15) improvements.push('Explicitly explain *why*, not just *what* &mdash; interviewers give more credit for reasoning through the "why" than for stating a fact.');
+
+  return {strengths, improvements, wordCount};
 }
 </script>
 </body>
