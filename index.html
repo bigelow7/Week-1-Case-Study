@@ -10,11 +10,11 @@
     --navy-dark:#001A38;
     --navy-light:#0B4A8C;
     --sky:#4298B5;
-    --gold:#FFB800;
+    --gold:#5f6f72;
     --bg:#F4F6F9;
     --card:#FFFFFF;
     --text:#1B2430;
-    --muted:#5B6673;
+    --muted:#3d3735;
     --border:#DCE3EC;
     --good:#1E7A46;
     --radius:12px;
@@ -314,7 +314,7 @@
 <header class="site">
   <div class="bar">
     <a href="#home" class="brand" onclick="go('home');return false;">
-      <span class="mark">IS</span> IS Career Launchpad
+      </span> IS Career Launchpad
     </a>
     <nav class="main">
       <button data-view="home" onclick="go('home')">Home</button>
@@ -936,14 +936,19 @@ function render(){
 function renderHome(){
   return `
   <div class="hero">
-    <div class="wrap">
+    
+    <div class="wrap" style="text-align:center; margin:10px auto;">
       <h1>Find your IS career path &mdash; and walk into your interview ready.</h1>
-      <p>Built by IS students, for IS students. Explore real career paths in Information Systems, see exactly which BYU IS Junior Core classes prepare you for each one, and practice real interview questions before your next internship or job interview.</p>
-      <div class="cta-row">
-        <button class="btn" onclick="go('quiz')">Take the 2-Minute Quiz &rarr;</button>
+      <div style="max-width:700px; margin:0 auto; text-align:center;">
+        <p>
+        Built by IS students, for IS students. Explore real career paths in Information Systems, see exactly which BYU IS Junior Core classes prepare you for each one, and practice real interview questions before your next internship or job interview.
+        </p>
+
+        <div class="cta-row" style="display:flex; justify-content:center; gap:20px; margin-top:10px;">
+        <button class="btn" onclick="go('quiz')">Take the 2-Minute Quiz →</button>
         <a class="btn secondary" href="#paths" onclick="go('paths');return false;">Browse All Career Paths</a>
-      </div>
-    </div>
+        </div>
+      </div> 
   </div>
   <div class="wrap">
     <div class="home-grid">
@@ -961,16 +966,18 @@ function renderHome(){
       </div>
     </div>
     <div class="feature-card" style="margin-top:20px;">
-      <div class="num">?</div>
-      <h3>Not sure where to start?</h3>
-      <p>Take our 10-question quiz about how you like to work and think &mdash; we'll match you to the IS career path that fits you best.</p>
-      <div class="path-preview-grid">
-        ${PATHS.map(p=>`<button class="path-chip" onclick="go('path','${p.id}')">${p.short}</button>`).join('')}
-      </div>
-    </div>
-  </div>
+  <div class="num">?</div>
+  <h3>Not sure where to start?</h3>
+  <p>Take our 10‑question quiz about how you like to work and think — we'll match you to the IS career path that fits you best.</p>
+
+  <button class="btn ghost small" onclick="go('quiz')">
+    Take the Quiz
+  </button>
+</div>
+
+
   `;
-}
+} 
 
 /* ---------------- QUIZ ---------------- */
 function renderQuiz(){
