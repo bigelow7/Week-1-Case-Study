@@ -917,16 +917,18 @@ function renderHome(){
       </div>
     </div>
     <div class="feature-card" style="margin-top:20px;">
-      <div class="num">?</div>
-      <h3>Not sure where to start?</h3>
-      <p>Take our 10-question quiz about how you like to work and think &mdash; we'll match you to the IS career path that fits you best.</p>
-      <div class="path-preview-grid">
-        ${PATHS.map(p=>`<button class="path-chip" onclick="go('path','${p.id}')">${p.short}</button>`).join('')}
-      </div>
-    </div>
-  </div>
+  <div class="num">?</div>
+  <h3>Not sure where to start?</h3>
+  <p>Take our 10‑question quiz about how you like to work and think — we'll match you to the IS career path that fits you best.</p>
+
+  <button class="btn ghost small" onclick="go('quiz')">
+    Take the Quiz
+  </button>
+</div>
+
+
   `;
-}
+} 
 
 /* ---------------- QUIZ ---------------- */
 function renderQuiz(){
