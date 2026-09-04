@@ -120,6 +120,7 @@
   .btn:disabled{opacity:.5;cursor:not-allowed;}
 
   h2.section-title{font-size:1.5rem;margin:0 0 6px;color:var(--navy-dark);}
+  h2.path-selection-title{font-size:2rem;text-align:center;margin:48px 0 0;}
   p.section-sub{color:var(--muted);margin:0 0 28px;max-width:680px;}
 
   .card{
@@ -131,6 +132,7 @@
 
   /* ---------- HOME ---------- */
   .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:36px;}
+  .path-selection-grid{margin-bottom:64px;}
   @media (max-width:760px){.home-grid{grid-template-columns:1fr;}}
   .feature-card{
     background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
@@ -199,10 +201,6 @@
     background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);
     color:#fff;padding:40px 0;
   }
-  .path-header .tag{
-    display:inline-block;background:rgba(255,255,255,.15);padding:4px 12px;border-radius:99px;
-    font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;
-  }
   .path-header h1{margin:0 0 10px;font-size:1.9rem;}
   .path-header p{color:#DCE7F5;max-width:680px;margin:0;}
   .path-body{padding:34px 0 60px;}
@@ -211,8 +209,36 @@
     color:var(--navy-dark);font-size:1.05rem;margin:0 0 12px;
     display:flex;align-items:center;gap:8px;
   }
-  .path-section ul{margin:0;padding-left:20px;color:var(--text);}
-  .path-section li{margin-bottom:6px;}
+  .path-section ul,.path-info-card ul{margin:0;padding-left:20px;color:var(--text);}
+  .path-section li,.path-info-card li{margin-bottom:6px;}
+  .path-info-grid{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:30px;
+  }
+  .path-info-card{
+    background:#fff;border:1px solid var(--border);border-top:4px solid var(--navy-light);
+    border-radius:var(--radius);padding:22px;box-shadow:0 5px 18px rgba(0,46,93,.07);
+    position:relative;overflow:hidden;cursor:pointer;
+  }
+  .path-info-cover{
+    position:absolute;inset:0;z-index:2;display:grid;place-items:center;
+    padding:28px;background:#DDE2E8;color:var(--navy-dark);text-align:center;
+    font-size:1.2rem;font-weight:800;line-height:1.35;
+    transition:opacity .2s ease,transform .2s ease;
+  }
+  .path-info-content{opacity:0;font-weight:700;transition:opacity .2s ease;}
+  .path-info-card:hover .path-info-cover,
+  .path-info-card:focus .path-info-cover{opacity:0;transform:scale(.985);}
+  .path-info-card:hover .path-info-content,
+  .path-info-card:focus .path-info-content{opacity:1;}
+  .path-info-card:focus{outline:none;}
+  .path-info-card:focus-visible{outline:3px solid var(--gold);outline-offset:3px;}
+  .path-info-card .tech-term{font-weight:800;color:var(--navy-dark);}
+  @media (prefers-reduced-motion:reduce){
+    .path-info-cover,.path-info-content{transition:none;}
+  }
+  @media (max-width:760px){.path-info-grid{grid-template-columns:1fr;}}
+  .entry-level-list{font-size:1.08rem;line-height:1.65;padding-left:24px;}
+  .entry-level-list li{margin-bottom:8px;}
   .salary-box{
     background:#F0F5FB;border:1px solid var(--border);border-radius:10px;padding:16px 18px;
   }
@@ -224,18 +250,6 @@
   .course-card{border:1px solid var(--border);border-radius:10px;padding:14px 16px;background:#fff;}
   .course-card .code{font-weight:800;color:var(--navy);font-size:.85rem;}
   .course-card .cname{font-weight:700;margin:2px 0 6px;}
-  .course-card .why{color:var(--muted);font-size:.85rem;}
-  .placeholder-note{
-    border:1px solid var(--border);background:#F0F5FB;color:var(--muted);
-    border-radius:10px;padding:10px 14px;font-size:.82rem;margin-bottom:14px;
-  }
-  .path-footer-nav{display:flex;justify-content:space-between;gap:12px;margin-top:36px;flex-wrap:wrap;}
-  .browse-strip{display:flex;gap:10px;overflow-x:auto;padding:6px 0 4px;margin-top:10px;}
-  .browse-strip button{
-    flex:0 0 auto;background:#fff;border:1px solid var(--border);border-radius:8px;
-    padding:8px 14px;font-size:.8rem;font-weight:600;color:var(--navy-dark);cursor:pointer;white-space:nowrap;
-  }
-  .browse-strip button.current{background:var(--navy);color:#fff;border-color:var(--navy);}
 
   /* ---------- INTERVIEW HUB ---------- */
   .interview-path-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:10px;}
@@ -351,9 +365,7 @@ const PATHS = [
     unique:'Software developers turn requirements into working products. Unlike a pure "coder," IS-trained developers understand the business process behind the software, which makes them especially good at building tools that actually fit how a company works — not just technically impressive code.',
     dayToDay:[
       'Write, test, and debug code for a specific feature or module',
-      'Participate in stand-ups and sprint planning (Agile/Scrum)',
       'Review teammates\' code (pull requests) and get your own code reviewed',
-      'Translate a business requirement or user story into a technical design',
       'Fix bugs reported by QA, support, or users',
       'Write documentation and automated tests'
     ],
@@ -365,7 +377,11 @@ const PATHS = [
       'Familiarity with a web or app framework (React, Spring, .NET, etc.)',
       'Debugging and reading stack traces / error logs'
     ],
-    entryLevel:'Most entry-level roles expect a completed CS/IS/related degree (or strong bootcamp + portfolio), 1+ substantial coding project (class project, internship, or personal project) you can explain in depth, and the ability to pass a technical screen — usually live coding, a take-home project, or both.',
+    entryLevel:[
+      'One solid coding project you can explain',
+      'The reasoning behind your technical choices',
+      'Readiness for a basic coding screen or take-home task'
+    ],
     strongCandidate:[
       'Can explain the "why" behind their code, not just that it works',
       'Has at least one project they can walk through end-to-end',
@@ -374,10 +390,9 @@ const PATHS = [
     ],
     salary:{figure:'$135,980/yr median (all experience levels)', entry:'~$99K/yr median total pay for entry-level roles (Glassdoor)', growth:'+10% projected job growth, 2025–2035 (much faster than average)', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Software Developers', url:'https://www.bls.gov/ooh/computer-and-information-technology/software-developers.htm', source2:'Glassdoor — Entry Level Software Developer salaries', url2:'https://www.glassdoor.com/Salaries/entry-level-software-developer-salary-SRCH_KO0,30.htm'},
     courses:[
-      {code:'IS 403',name:'Principles of Business Programming',why:'Junior Core course teaching programming fundamentals (C#, ASP.NET MVC), algorithms, data structures, and interfaces — the direct on-ramp to writing production code.'},
-      {code:'IS 411',name:'Systems Design and Implementation',why:'Junior Core course covering system architecture, interfaces, application design, testing, and object-oriented development — the later SDLC phases developers live in daily.'},
-      {code:'IS 413',name:'Enterprise Application Development',why:'Junior Core course on client- and server-side programming and web/enterprise application architecture — essentially this job description.'},
-      {code:'IS 537',name:'Data Structures and Algorithms',why:'Core CS fundamentals (efficient data organization, algorithm performance) that show up directly in technical interviews for this role.'}
+      {code:'IS 403',name:'Principles of Business Programming',why:'Builds programming, algorithm, data-structure, and interface skills used every day in this role.'},
+      {code:'IS 402',name:'Database Systems',why:'Nearly every application talks to a database — SQL, normalization, and data modeling are core developer skills.'},
+      {code:'IS 411',name:'Systems Design and Implementation',why:'Teaches how to turn requirements into application architecture, interfaces, testing, and an implemented system.'}
     ]
   },
   {
@@ -388,21 +403,20 @@ const PATHS = [
     unique:'This is often called the "quintessential IS job" — you don\'t need to be the deepest coder or the deepest statistician, but you need to be fluent enough in both business and technology to translate between people who aren\'t. It\'s a strong fit if you like people, processes, and problem-solving equally.',
     dayToDay:[
       'Interview stakeholders to understand a business problem or process',
-      'Document current-state and future-state workflows (process maps, flowcharts)',
-      'Write requirements documents / user stories for a development team',
       'Facilitate meetings between business teams and technical teams',
-      'Analyze data to support a recommendation',
       'Test new systems against the original requirements (UAT)'
     ],
     skills:[
       'Process mapping and flowcharting (Visio, Lucidchart)',
-      'Requirements gathering & documentation',
       'Basic SQL / Excel for data-backed recommendations',
-      'Familiarity with Agile ceremonies and user stories',
       'Strong written and verbal communication',
       'Light project-management skills (timelines, prioritization)'
     ],
-    entryLevel:'Employers want to see you can run a structured conversation (interview a "client" and pull out real requirements), write clearly, and back up a recommendation with actual data or logic — not just opinion. A class case competition or internship where you produced a requirements doc or process map is exactly the kind of proof they look for.',
+    entryLevel:[
+      'Gather clear requirements from stakeholders',
+      'Map and explain a business process',
+      'Support recommendations with data'
+    ],
     strongCandidate:[
       'Asks clarifying questions instead of assuming what the stakeholder wants',
       'Can simplify a complex process into a clear diagram or document',
@@ -411,10 +425,9 @@ const PATHS = [
     ],
     salary:{figure:'$101,860/yr median (Management Analysts, all experience — closest BLS category)', entry:'~$87,780/yr average for entry-level Business Systems Analyst (Salary.com)', growth:'+10% projected job growth, 2025–2035 (much faster than average)', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Management Analysts', url:'https://www.bls.gov/ooh/business-and-financial/management-analysts.htm', source2:'Salary.com — Entry Level Business Systems Analyst', url2:'https://www.salary.com/research/salary/position/entry-level-business-systems-analyst-salary'},
     courses:[
-      {code:'IS 401',name:'Project Management and Systems Design',why:'Junior Core course built specifically for this role — requirements definition, investigation, planning, and systems design are the daily craft of a BA.'},
-      {code:'IS 402',name:'Database Systems',why:'Junior Core course in SQL and relational data modeling — BAs constantly back recommendations with real data.'},
-      {code:'IS 411',name:'Systems Design and Implementation',why:'Junior Core course on translating requirements into system architecture and interfaces — how a BA\'s documentation becomes a real system.'},
-      {code:'IS 110',name:'Spreadsheet Skills and Business Analysis',why:'Foundational Excel/analysis course — pivot tables and structured analysis are everyday BA tools.'}
+      {code:'IS 401',name:'Project Management and Systems Design',why:'Directly covers investigation, requirements definition, planning, project management, and systems design.'},
+      {code:'IS 402',name:'Database Systems',why:'Builds the SQL and data-modeling skills analysts use to understand systems and support recommendations.'},
+      {code:'IS 411',name:'Systems Design and Implementation',why:'Connects requirements to architecture, user interfaces, testing, integration, and implementation.'}
     ]
   },
   {
@@ -426,20 +439,20 @@ const PATHS = [
     dayToDay:[
       'Pull and clean data from one or more systems (SQL queries, Python/R scripts)',
       'Build and maintain dashboards (Tableau, Power BI, Looker)',
-      'Run ad-hoc analysis to answer a specific business question',
-      'Present findings and recommendations to non-technical stakeholders',
-      '(Data scientist) build, validate, and tune predictive models',
-      'Partner with engineering on data quality and pipeline issues'
+      '(Data scientist) build, validate, and tune predictive models'
     ],
     skills:[
       'SQL (essential — used daily in nearly every analyst role)',
       'Excel and a BI tool (Tableau or Power BI)',
       'Python or R for analysis (pandas, basic stats)',
       'Data visualization / storytelling with data',
-      'Statistics fundamentals (data scientist track goes deeper here)',
-      'Data cleaning and handling messy/incomplete data'
+      'Statistics fundamentals (data scientist track goes deeper here)'
     ],
-    entryLevel:'Most entry-level postings expect solid SQL (you will almost certainly be tested on it), comfort with at least one BI or scripting tool, and a portfolio project where you took a raw dataset to an actual insight or recommendation — a class project counts if you can explain your methodology.',
+    entryLevel:[
+      'Solid SQL fundamentals',
+      'Experience with a BI or scripting tool',
+      'A project that turned data into a useful insight'
+    ],
     strongCandidate:[
       'Can write and explain SQL queries live, not just describe them',
       'Tells a clear story with data instead of just presenting numbers',
@@ -448,10 +461,9 @@ const PATHS = [
     ],
     salary:{figure:'$120,230/yr median (Data Scientists, all experience — BLS)', entry:'~$63,000/yr median total pay for entry-level Data Analyst (Glassdoor)', growth:'+35% projected job growth, 2025–2035 (much faster than average)', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Data Scientists', url:'https://www.bls.gov/ooh/math/data-scientists.htm', source2:'Glassdoor — Entry Level Data Analyst salaries', url2:'https://www.glassdoor.com/Salaries/entry-level-data-analyst-salary-SRCH_KO0,24.htm'},
     courses:[
-      {code:'IS 115',name:'Introduction to Data Analytics in Python',why:'First exposure to Python for data work — importing, cleaning, and summarizing data, the foundation everything else builds on.'},
-      {code:'IS 415',name:'Exploratory Data Analysis',why:'Junior Core course using Python/Jupyter for statistics, visualization, and dashboards — directly the analyst day-to-day.'},
-      {code:'IS 455',name:'Predictive AI in Business (Machine Learning Foundations)',why:'Foundational ML/predictive modeling — the natural next step from analyst-level work toward data-scientist-level work.'},
-      {code:'IS 555',name:'Data Science Workflows for Organizations',why:'Covers how real organizations structure and run data science projects end to end, from scoping to deployment.'}
+      {code:'IS 402',name:'Database Systems',why:'SQL, normalization, and relational data modeling are the daily foundation of analyst work.'},
+      {code:'IS 415',name:'Exploratory Data Analysis',why:'Directly teaches statistics, visualizations, data storytelling, and interactive dashboards in Python.'},
+      {code:'IS 403',name:'Principles of Business Programming',why:'Programming, algorithms, and data structures strengthen the technical foundation needed for advanced analytics.'}
     ]
   },
   {
@@ -462,7 +474,6 @@ const PATHS = [
     unique:'Cybersecurity blends technical depth (networks, systems, protocols) with an investigative, adversarial mindset. It\'s one of the few IS-adjacent paths with a genuine talent shortage, and entry-level roles (SOC Analyst Tier 1) are a realistic, well-paid landing spot right out of college.',
     dayToDay:[
       'Monitor security dashboards / SIEM tools for suspicious activity',
-      'Investigate and triage security alerts (is this real or a false positive?)',
       'Maintain and tune firewalls, endpoint protection, and other defenses',
       'Run or support vulnerability scans and patch prioritization',
       'Document incidents and write up findings',
@@ -470,13 +481,15 @@ const PATHS = [
     ],
     skills:[
       'Networking fundamentals (TCP/IP, DNS, firewalls)',
-      'The CIA triad and core security concepts',
       'Familiarity with a SIEM tool (Splunk, Microsoft Sentinel)',
       'Basic scripting (Python or PowerShell) for automation',
-      'An entry security certification (Security+, or working toward one)',
-      'Calm, methodical incident response under pressure'
+      'An entry security certification (Security+, or working toward one)'
     ],
-    entryLevel:'A Security+ certification (or actively studying for one) meaningfully strengthens an entry-level application. Employers also want basic networking fluency and evidence of hands-on practice — home labs, TryHackMe/HackTheBox, CTF (capture-the-flag) competitions, or a security-focused class project all count.',
+    entryLevel:[
+      'Networking and security fundamentals',
+      'Hands-on practice through a lab, CTF, or class project',
+      'A security certification or active study plan is a plus'
+    ],
     strongCandidate:[
       'Thinks like an attacker as well as a defender ("how would I break this?")',
       'Is precise and methodical — security work punishes sloppiness',
@@ -485,10 +498,9 @@ const PATHS = [
     ],
     salary:{figure:'$129,180/yr median (Information Security Analysts, all experience — BLS)', entry:'~$99,400/yr average for entry-level Cyber Security Analyst (ZipRecruiter)', growth:'+21% projected job growth, 2025–2035 (much faster than average)', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Information Security Analysts', url:'https://www.bls.gov/ooh/computer-and-information-technology/information-security-analysts.htm', source2:'ZipRecruiter — Entry Level Cyber Security Analyst salary', url2:'https://www.ziprecruiter.com/Salaries/Entry-Level-Cyber-Security-Analyst-Salary'},
     courses:[
-      {code:'IS 414',name:'Information Systems Security and Controls',why:'Junior Core course covering threat identification, prevention/detection, and core security principles — the foundation of this entire role.'},
-      {code:'IS 404',name:'Information Technology Infrastructure',why:'Junior Core networking course (data communications, LANs/WANs, protocols) — you can\'t secure a network you don\'t understand.'},
-      {code:'IS 560',name:'Information Security Management',why:'Security from a governance/policy angle — risk management and organizational strategy alongside the technical side.'},
-      {code:'IS 567',name:'Cybersecurity and Penetration Testing',why:'Hands-on offensive security — testing systems for vulnerabilities the way a real attacker would.'}
+      {code:'IS 404',name:'Information Technology Infrastructure',why:'Cloud computing, networks, hardware, software, media, and standards form the technical backbone of security work.'},
+      {code:'IS 414',name:'Information Systems Security and Controls',why:'Directly covers securing information systems and applying controls to business processes.'},
+      {code:'IS 411',name:'Systems Design and Implementation',why:'Understanding system architecture, interfaces, testing, and integration helps reveal where systems can fail or be attacked.'}
     ]
   },
   {
@@ -499,21 +511,22 @@ const PATHS = [
     unique:'You don\'t need to be the best coder in the room — you need to be the person who makes sure the coders, the designers, and the business stakeholders are all rowing in the same direction. IS students who like leadership, organization, and communication more than heads-down technical work often thrive here.',
     dayToDay:[
       'Build and maintain project timelines/roadmaps',
-      'Run stand-ups, sprint planning, and status meetings',
       'Track budget, scope, and risk; escalate issues early',
-      'Communicate status to executives and stakeholders',
-      'Remove blockers for the team (vendor delays, unclear requirements, etc.)',
-      'Manage change requests and keep scope from silently growing ("scope creep")'
+      'Communicate status to executives and stakeholders'
     ],
     skills:[
       'Project management fundamentals (scope, schedule, budget, risk)',
-      'Agile/Scrum methodology (most IT PM roles today are Agile or hybrid)',
+      'Agile/Scrum methodology',
       'Tools: Jira, Asana, Microsoft Project, Smartsheet',
       'Stakeholder communication and status reporting',
-      'Basic technical fluency — enough to understand what the dev team is building',
+      'Basic technical fluency',
       'Conflict resolution and negotiation'
     ],
-    entryLevel:'Very few people start their career as a formal "Project Manager" — most enter as a Project Coordinator, Associate PM, or Scrum Master and grow into full PM roles. A CAPM or entry PMP-track certification, or leading a class group project end-to-end, is strong proof of readiness.',
+    entryLevel:[
+      'Strong organization and communication skills',
+      'Experience leading a project from start to finish',
+      'Readiness to begin as a project coordinator or associate PM'
+    ],
     strongCandidate:[
       'Stays calm and organized when a project starts to go sideways',
       'Communicates status honestly, including bad news, early',
@@ -522,10 +535,9 @@ const PATHS = [
     ],
     salary:{figure:'$175,140/yr median (Computer & Information Systems Managers, senior — BLS)', entry:'Entry-level/Associate PM & Project Coordinator roles commonly range $55K–$80K/yr, growing quickly with a PMP', growth:'+16% projected job growth, 2025–2035 (much faster than average)', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Computer and Information Systems Managers', url:'https://www.bls.gov/ooh/management/computer-and-information-systems-managers.htm', source2:'Project Management Institute / industry salary surveys (see also PMI.org Salary Survey)', url2:'https://www.pmi.org/'},
     courses:[
-      {code:'IS 401',name:'Project Management and Systems Design',why:'Junior Core course built specifically for this role — project management, planning, and requirements definition across the systems development life cycle.'},
-      {code:'IS 411',name:'Systems Design and Implementation',why:'Junior Core course on architecture, testing, and integration — PMs need to understand how requirements become a real technical build to manage it well.'},
-      {code:'IS 402',name:'Database Systems',why:'Junior Core data fundamentals — enough technical fluency to follow what the dev team is actually building.'},
-      {code:'IS 582',name:'Tech Strategy and Leadership',why:'Strategic decision-making and leadership specifically inside technology organizations.'}
+      {code:'IS 401',name:'Project Management and Systems Design',why:'Directly covers project management, planning, investigation, requirements, and systems design.'},
+      {code:'IS 411',name:'Systems Design and Implementation',why:'Helps PMs understand how architecture, interfaces, testing, and integration turn requirements into a working system.'},
+      {code:'IS 404',name:'Information Technology Infrastructure',why:'Builds the technical fluency needed to manage projects involving cloud, networks, hardware, and software.'}
     ]
   },
   {
@@ -537,20 +549,20 @@ const PATHS = [
     dayToDay:[
       'Conduct user interviews and usability testing',
       'Sketch wireframes and build interactive prototypes (Figma)',
-      '(PM) write product requirements and prioritize the roadmap',
-      '(PM) analyze usage metrics to decide what to build next',
       'Present designs or product decisions to stakeholders for feedback',
       'Partner closely with engineers to make sure what ships matches the vision'
     ],
     skills:[
       'Wireframing/prototyping tools (Figma, Sketch)',
       'User research methods (interviews, usability testing, surveys)',
-      'Information architecture and interaction design principles',
-      '(PM) prioritization frameworks and roadmapping',
-      'Basic data literacy — reading metrics/dashboards to inform decisions',
+      'Basic data literacy',
       'Strong storytelling and presentation skills'
     ],
-    entryLevel:'For UX: a portfolio with 2–3 real case studies (even class projects) showing your process from research to final design is the single most important thing you can bring. For Product: internships, a case-competition project, or a personal "shipped" project where you made and defended prioritization calls carry the most weight.',
+    entryLevel:[
+      'A small UX portfolio or product case study',
+      'An example of a project you helped plan and prioritize',
+      'A clear explanation of the decisions you made'
+    ],
     strongCandidate:[
       'Can explain the "why" behind a design or product decision, not just show the final result',
       'Talks about trade-offs honestly (what they\'d change, why something didn\'t work)',
@@ -559,10 +571,9 @@ const PATHS = [
     ],
     salary:{figure:'$99,520/yr median for Web & Digital Interface Designers (closest BLS category)', entry:'~$127K/yr median total pay for entry-level Product Manager; entry UX design roles commonly $65K–$90K/yr (Glassdoor)', growth:'+5% projected growth for design roles; product management growing faster than average across tech broadly', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Web Developers and Digital Designers', url:'https://www.bls.gov/ooh/computer-and-information-technology/web-developers.htm', source2:'Glassdoor — Entry Level Product Manager salaries', url2:'https://www.glassdoor.com/Salaries/entry-level-product-manager-salary-SRCH_KO0,27.htm'},
     courses:[
-      {code:'IS 401',name:'Project Management and Systems Design',why:'Junior Core course in requirements gathering and systems design — the user-centered thinking that underlies both UX and product work.'},
-      {code:'IS 551',name:'User Experience Design and Technical Leadership',why:'The most direct match available — UX design principles paired with the technical leadership PMs also need.'},
-      {code:'IS 562',name:'Information Systems Product Management',why:'Product management specifically for IS/tech products — roadmapping, prioritization, and cross-functional leadership.'},
-      {code:'IS 590R',name:'User-Centered Interface Design',why:'A variable-topics seminar focused specifically on designing interfaces around real user needs and usability.'}
+      {code:'IS 401',name:'Project Management and Systems Design',why:'Requirements definition, planning, and systems design directly transfer to product discovery and roadmap work.'},
+      {code:'IS 411',name:'Systems Design and Implementation',why:'Its focus on user interfaces and application design directly supports UX and product development.'},
+      {code:'IS 415',name:'Exploratory Data Analysis',why:'Product managers use data storytelling, visualizations, and dashboards to understand users and prioritize the roadmap.'}
     ]
   },
   {
@@ -574,20 +585,20 @@ const PATHS = [
     dayToDay:[
       'Gather requirements for how a business process should work inside the ERP',
       'Configure system modules (e.g., Finance, Supply Chain, HR) to match those requirements',
-      'Test configurations and troubleshoot issues before go-live',
-      'Train end users and write documentation',
-      'Support data migration from an old system into the new ERP',
-      'Travel to client sites (consulting-track roles especially)'
+      'Support data migration from an old system into the new ERP'
     ],
     skills:[
       'Deep familiarity with one ERP platform (SAP, Salesforce, Oracle, Workday, Microsoft Dynamics)',
       'Business process knowledge in at least one functional area (finance, supply chain, HR)',
-      'Requirements gathering and configuration documentation',
       'Basic SQL / data migration concepts',
-      'Client-facing communication and presentation skills',
-      'Change management — helping users adopt a new system'
+      'Client-facing communication and presentation skills'
     ],
-    entryLevel:'Most people enter through a Big 4 or SI-firm new-grad consulting program, which trains you on a specific platform (often SAP or Salesforce) after hiring. A platform certification you earn yourself (e.g., a Salesforce Trailhead badge) is a strong, concrete signal even before you have job experience.',
+    entryLevel:[
+      'Ability to learn complex business software',
+      'Understanding of business processes',
+      'Clear client communication',
+      'A platform badge or certification is a plus'
+    ],
     strongCandidate:[
       'Is comfortable being a "translator" between business process and system configuration',
       'Learns new software systems quickly and methodically',
@@ -596,10 +607,9 @@ const PATHS = [
     ],
     salary:{figure:'$101,526/yr average (all experience — Payscale, ERP Consultant)', entry:'~$72,764/yr average total comp for entry-level ERP Consultant (Payscale)', growth:'Consistently strong demand tied to ERP modernization and cloud-migration projects across nearly every large industry', source:'Payscale — ERP Consultant Salary', url:'https://www.payscale.com/research/US/Job=ERP_Consultant/Salary', source2:'', url2:''},
     courses:[
-      {code:'IS 401',name:'Project Management and Systems Design',why:'Junior Core course in requirements gathering and systems design — ERP consulting is fundamentally about mapping business process to system configuration.'},
-      {code:'IS 402',name:'Database Systems',why:'Junior Core data fundamentals — data migration and reporting inside an ERP both rely on solid data-modeling skills.'},
-      {code:'IS 531',name:'Enterprise Infrastructure',why:'Covers the architecture and management of enterprise-scale IT systems — the environment ERP platforms run in.'},
-      {code:'IS 566',name:'Advanced Database Management',why:'Deeper database administration and performance tuning — directly useful once you\'re configuring a real ERP\'s data layer.'}
+      {code:'IS 413',name:'Enterprise Application Development',why:'Covers client-server development, enterprise systems, and architectures that underpin large business platforms.'},
+      {code:'IS 401',name:'Project Management and Systems Design',why:'Requirements definition and systems design support the process-mapping and implementation work central to ERP consulting.'},
+      {code:'IS 402',name:'Database Systems',why:'Data migration and reporting inside an ERP both rely on SQL, normalization, and solid data-modeling fundamentals.'}
     ]
   },
   {
@@ -617,14 +627,17 @@ const PATHS = [
       'Support other teams (developers, data teams) who depend on the infrastructure'
     ],
     skills:[
-      'A major cloud platform (AWS, Azure, or Google Cloud) — certification strongly helps',
+      'A major cloud platform certification (AWS, Azure, or Google Cloud)',
       'Networking fundamentals (subnets, DNS, load balancing)',
       'Linux command line basics',
       'Scripting for automation (Python, Bash, PowerShell)',
-      'Infrastructure as Code concepts (Terraform, ARM templates)',
-      'Monitoring/logging tools and incident response basics'
+      'Infrastructure as Code concepts (Terraform, ARM templates)'
     ],
-    entryLevel:'An entry cloud certification (AWS Certified Cloud Practitioner or Azure Fundamentals AZ-900, then a role-based cert like AWS Solutions Architect Associate) is one of the fastest ways to stand out with no work experience. Many people also enter through a Help Desk / IT Support role and move into cloud/infrastructure from there.',
+    entryLevel:[
+      'Cloud and networking fundamentals',
+      'Comfort using the Linux command line',
+      'A hands-on cloud project or entry-level certification'
+    ],
     strongCandidate:[
       'Is comfortable in the command line and troubleshooting systems methodically',
       'Has hands-on cloud experience — even a free-tier AWS/Azure personal project counts',
@@ -633,10 +646,9 @@ const PATHS = [
     ],
     salary:{figure:'$99,130/yr median (Network & Computer Systems Administrators, closest BLS category)', entry:'~$101,337/yr average for entry-level Cloud Engineer (Payscale, via DataCamp)', growth:'Cloud-specific roles are growing quickly even where traditional on-prem admin roles are flat to declining', source:'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook — Network and Computer Systems Administrators', url:'https://www.bls.gov/ooh/computer-and-information-technology/network-and-computer-systems-administrators.htm', source2:'DataCamp — Cloud Engineer Salary Guide', url2:'https://www.datacamp.com/blog/cloud-engineer-salary'},
     courses:[
-      {code:'IS 404',name:'Information Technology Infrastructure',why:'Junior Core networking course (data communications, LANs/WANs, protocols) — the fundamentals underneath every cloud environment.'},
-      {code:'IS 414',name:'Information Systems Security and Controls',why:'Junior Core security course — securing cloud environments (access control, encryption) is a core infrastructure responsibility.'},
-      {code:'IS 531',name:'Enterprise Infrastructure',why:'Architecture and management of enterprise-scale IT infrastructure — servers, networks, and systems at real scale.'},
-      {code:'IS 532',name:'Cloud Engineering and DevOps',why:'The most direct match available — cloud platform engineering, automation, and infrastructure-as-code, this job\'s exact toolkit.'}
+      {code:'IS 404',name:'Information Technology Infrastructure',why:'Cloud computing, data communications, and network fundamentals underpin nearly everything in cloud infrastructure.'},
+      {code:'IS 414',name:'Information Systems Security and Controls',why:'Securing information systems and applying controls are core cloud-infrastructure responsibilities.'},
+      {code:'IS 402',name:'Database Systems',why:'Provisioning and maintaining database infrastructure requires a solid foundation in SQL and data modeling.'}
     ]
   }
 ];
@@ -1106,13 +1118,11 @@ function renderResults(){
 function renderPathsList(){
   return `
   <div class="wrap">
-    <h2 class="section-title">Career Paths in Information Systems</h2>
-    <p class="section-sub">${PATHS.length} real IS career paths, each covering day-to-day work, required skills, entry-level expectations, salary &amp; growth data, and the BYU IS Junior Core classes that prepare you.</p>
-    <div class="home-grid">
+    <h2 class="section-title path-selection-title">Career Paths in Information Systems</h2>
+    <div class="home-grid path-selection-grid">
       ${PATHS.map(p=>`
         <div class="feature-card">
           <h3>${p.name}</h3>
-          <p>${p.tagline}</p>
           <button class="btn ghost small" onclick="go('path','${p.id}')">Explore This Path &rarr;</button>
         </div>
       `).join('')}
@@ -1121,17 +1131,17 @@ function renderPathsList(){
   `;
 }
 
+function emphasizeLanguages(text){
+  return text.replace(/C#|\b(?:JavaScript\/TypeScript|PowerShell|Python|Java|SQL|Bash|R)\b/g, '<strong class="tech-term">$&</strong>');
+}
+
 /* ---------------- PATH DETAIL ---------------- */
 function renderPathDetail(id){
   const p = PATH_MAP[id];
   if(!p) return renderPathsList();
-  const idx = PATHS.findIndex(x=>x.id===id);
-  const prev = PATHS[(idx-1+PATHS.length)%PATHS.length];
-  const next = PATHS[(idx+1)%PATHS.length];
   return `
   <div class="path-header">
     <div class="wrap">
-      <span class="tag">Career Path ${idx+1} of ${PATHS.length}</span>
       <h1>${p.name}</h1>
       <p>${p.tagline}</p>
     </div>
@@ -1140,28 +1150,38 @@ function renderPathDetail(id){
     <div class="wrap">
       <div class="breadcrumb"><button onclick="go('paths')">&larr; All Career Paths</button></div>
 
-      <div class="path-section">
-        <h3>&#10024; What Makes This Path Unique</h3>
-        <p>${p.unique}</p>
+      <div class="path-info-grid">
+        <section class="path-info-card" tabindex="0" aria-label="Day-to-Day Work">
+          <div class="path-info-cover" aria-hidden="true">Day-to-Day Work</div>
+          <div class="path-info-content">
+            <ul>${p.dayToDay.map(d=>`<li>${d}</li>`).join('')}</ul>
+          </div>
+        </section>
+
+        <section class="path-info-card" tabindex="0" aria-label="Entry-Level Expectations">
+          <div class="path-info-cover" aria-hidden="true">Entry-Level Expectations</div>
+          <div class="path-info-content">
+            <ul class="entry-level-list">${p.entryLevel.map(item=>`<li>${item}</li>`).join('')}</ul>
+          </div>
+        </section>
+
+        <section class="path-info-card" tabindex="0" aria-label="Strong Candidate Qualities">
+          <div class="path-info-cover" aria-hidden="true">Strong Candidate Qualities</div>
+          <div class="path-info-content">
+            <ul>${p.strongCandidate.map(s=>`<li>${s}</li>`).join('')}</ul>
+          </div>
+        </section>
+
+        <section class="path-info-card" tabindex="0" aria-label="Technical Skills and Tools">
+          <div class="path-info-cover" aria-hidden="true">Technical Skills &amp; Tools</div>
+          <div class="path-info-content">
+            <ul>${p.skills.map(s=>`<li>${emphasizeLanguages(s)}</li>`).join('')}</ul>
+          </div>
+        </section>
       </div>
 
       <div class="path-section">
-        <h3>&#128188; What You'd Actually Be Doing</h3>
-        <ul>${p.dayToDay.map(d=>`<li>${d}</li>`).join('')}</ul>
-      </div>
-
-      <div class="path-section">
-        <h3>&#128295; Technical Skills &amp; Tools</h3>
-        <ul>${p.skills.map(s=>`<li>${s}</li>`).join('')}</ul>
-      </div>
-
-      <div class="path-section">
-        <h3>&#127891; What an Entry-Level Candidate Is Expected to Know</h3>
-        <p>${p.entryLevel}</p>
-      </div>
-
-      <div class="path-section">
-        <h3>&#128176; Realistic Salary &amp; Growth</h3>
+        <h3>Realistic Salary &amp; Growth</h3>
         <div class="salary-box">
           <div class="figure">${p.salary.figure}</div>
           <div style="margin-top:6px;color:var(--muted);">Entry-level: ${p.salary.entry}</div>
@@ -1171,19 +1191,12 @@ function renderPathDetail(id){
       </div>
 
       <div class="path-section">
-        <h3>&#11088; What Makes a Strong Candidate</h3>
-        <ul>${p.strongCandidate.map(s=>`<li>${s}</li>`).join('')}</ul>
-      </div>
-
-      <div class="path-section">
-        <h3>&#127979; BYU IS Junior Core Classes That Prepare You</h3>
-        <div class="placeholder-note">Pulled from BYU's official Information Systems course list and catalog descriptions (see <code>byu-is-course-descriptions.md</code>). Easy to edit in the <code>PATHS</code> data array at the top of the script if requirements change.</div>
+        <h3>BYU IS Junior Core Classes That Prepare You</h3>
         <div class="course-grid">
           ${p.courses.map(c=>`
             <div class="course-card">
               <div class="code">${c.code}</div>
               <div class="cname">${c.name}</div>
-              <div class="why">${c.why}</div>
             </div>
           `).join('')}
         </div>
@@ -1193,14 +1206,6 @@ function renderPathDetail(id){
         <h3 style="justify-content:center;">Ready to practice for this role?</h3>
         <p style="color:var(--muted);margin-bottom:16px;">Try real interview questions researched specifically for ${p.short} roles.</p>
         <button class="btn" onclick="go('interview-session','${p.id}')">Practice ${p.short} Interview Questions &rarr;</button>
-      </div>
-
-      <div class="path-footer-nav">
-        <button class="btn ghost small" onclick="go('path','${prev.id}')">&larr; ${prev.short}</button>
-        <button class="btn ghost small" onclick="go('path','${next.id}')">${next.short} &rarr;</button>
-      </div>
-      <div class="browse-strip">
-        ${PATHS.map(x=>`<button class="${x.id===id?'current':''}" onclick="go('path','${x.id}')">${x.short}</button>`).join('')}
       </div>
     </div>
   </div>
