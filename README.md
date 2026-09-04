@@ -6,7 +6,7 @@ A single-file, no-build HTML/CSS/JS prototype built for the BYU IS Junior Core C
 
 1. **Career Path Discovery** — 8 IS career paths (Software/App Developer, Business/Systems Analyst, Data Analyst/Data Scientist, Cybersecurity Analyst, IT Project Manager, UX Designer/Product Manager, ERP/Systems Consultant, Cloud/Infrastructure Engineer). Each path page covers what makes it unique, day-to-day work, technical skills, entry-level expectations, sourced salary/growth data, what makes a strong candidate, and which BYU IS Junior Core classes prepare you for it.
 2. **"Find My Path" quiz** — 10 questions, deterministic point-based scoring (no external AI call), matches the user to a best-fit career path (or paths, on a tie).
-3. **Interview Prep** — for all 8 paths, real behavioral + technical interview questions researched from Glassdoor candidate reports, DataLemur/InterviewQuery, Exponent, and other public interview-prep sources, each with a written model answer. Also includes a **working, rule-based feedback engine** ("Get Feedback on My Answer") that gives real, specific coaching on whatever the user types — no AI model, API key, or network call required — built to be swapped for a real AI model later without changing the UI.
+3. **Interview Prep** — for all 8 paths, real behavioral + technical interview questions researched from Glassdoor candidate reports, DataLemur/InterviewQuery, Exponent, and other public interview-prep sources, each with a written model answer. In supported Chrome browsers, the **built-in Prompt API** uses Gemini Nano to generate personalized feedback entirely on the user's device. Other browsers automatically receive the existing rule-based feedback, so the module remains functional everywhere.
 
 ## How to edit it
 
@@ -18,13 +18,13 @@ Everything is data-driven at the top of the `<script>` block in `index.html`:
 
 No build tools needed — edit the file, refresh the browser.
 
-## How the interview feedback works right now
+## How the interview feedback works
 
-Clicking "Get Feedback on My Answer" does **not** call an AI model — it runs a small rule-based checker entirely in the browser (`buildBehavioralFeedback()` / `buildTechnicalFeedback()` in `index.html`), the same way the quiz scoring works. For a behavioral question it checks the answer against the STAR framework (does it set up a situation, describe a specific action with "I," and end with a concrete result). For a technical question it checks the answer against a curated `keyTerms` list attached to that question, plus whether the answer includes a concrete example and explains *why*, not just *what*. It returns real "what's working" / "what to improve" feedback either way — there's nothing to configure, and it works with zero setup, no API key, and no internet connection.
+Clicking "Get AI Feedback on My Answer" first checks for Chrome's built-in `LanguageModel` API. When available, Gemini Nano evaluates the exact career, question, answer, reference answer, and technical concepts, then returns structured strengths and improvements. The model runs locally, so the answer is not sent to a remote AI service and no API key or application server is required. Chrome may need to download the on-device model the first time it is used.
 
-## Wiring in a real AI model later (optional)
+If the Prompt API is not supported or the model cannot start, the page automatically uses `buildBehavioralFeedback()` or `buildTechnicalFeedback()`. Behavioral answers are checked for specificity and STAR elements; technical answers are checked against curated `keyTerms`, examples, and reasoning. The interface always identifies which engine produced the feedback.
 
-The rule-based engine above is fully functional on its own and satisfies the assignment's feedback requirement without any external dependency. If you want to upgrade it to a real AI model later, replace the body of the `getFeedback()` function near the bottom of the script with a `fetch()` call to your model/API endpoint (passing the question text and the user's typed answer), and render the response in place of the `buildBehavioralFeedback()`/`buildTechnicalFeedback()` output. The surrounding UI (the panel, the "Show Model Answer" comparison) needs no changes.
+Chrome's Prompt API currently requires a supported desktop Chrome installation and eligible hardware. The fallback makes the deployed GitHub Pages site safe to demonstrate in any browser even when on-device AI is unavailable.
 
 ## Publishing to GitHub Pages
 

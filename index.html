@@ -296,6 +296,13 @@
   .feedback-panel{background:#EEF3FB;border:1px solid #C7D9EF;}
   .feedback-panel .label{color:var(--navy);font-weight:800;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
   .feedback-panel .fb-tagline{color:var(--muted);font-size:.8rem;margin-bottom:12px;}
+  .ai-mode{
+    display:inline-flex;align-items:center;gap:6px;margin:0 0 12px;padding:6px 10px;
+    border:1px solid #C7D9EF;border-radius:999px;background:#F7FAFE;
+    color:var(--navy);font-size:.75rem;font-weight:700;
+  }
+  .ai-mode::before{content:'\2726';color:var(--gold);}
+  .ai-summary{margin:0 0 10px;color:var(--text);font-weight:600;}
   .feedback-panel .spinner{
     display:inline-block;width:14px;height:14px;border:2px solid var(--navy-light);border-top-color:transparent;
     border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:-2px;
@@ -909,6 +916,12 @@ let quizIndex = 0;
 let quizAnswers = new Array(QUESTIONS.length).fill(null);
 let currentInterviewPath = null;
 let currentInterviewType = 'behavioral';
+let chromeAiSession = null;
+
+const CHROME_AI_OPTIONS = {
+  expectedInputs:[{type:'text',languages:['en']}],
+  expectedOutputs:[{type:'text',languages:['en']}]
+};
 
 function go(view, param){
   location.hash = param ? `${view}/${param}` : view;
@@ -1278,13 +1291,14 @@ function openQuestion(i){
       <div class="qsource">${q.source}</div>
       <label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:6px;">Your answer:</label>
       <textarea class="answer-box" id="answerBox" placeholder="Type your answer here, like you're actually in the interview..."></textarea>
+      <div class="ai-mode" id="aiMode">Checking for Chrome on-device AI...</div>
       <div class="practice-actions">
-        <button class="btn small" onclick="getFeedback(${i})">Get Feedback on My Answer</button>
+        <button class="btn small" id="feedbackButton" onclick="getFeedback(${i})">Get AI Feedback on My Answer</button>
         <button class="btn ghost small" onclick="revealModel()">Show Model Answer</button>
       </div>
       <div class="feedback-panel" id="feedbackPanel">
         <div class="label">Feedback on Your Answer</div>
-        <div class="fb-tagline">Instant, rule-based coaching &mdash; not a generic response.</div>
+        <div class="fb-tagline">Private on-device AI coaching in supported Chrome browsers, with an instant rule-based fallback.</div>
         <div id="feedbackBody"></div>
       </div>
       <div class="model-answer" id="modelAnswer">
@@ -1293,6 +1307,7 @@ function openQuestion(i){
       </div>
     </div>
   `;
+  updateChromeAIStatus();
 }
 function revealModel(){
   document.getElementById('modelAnswer').classList.add('show');
@@ -1300,28 +1315,40 @@ function revealModel(){
 
 /* =========================================================================
    FEEDBACK ENGINE
-   This runs entirely in the browser — no external AI call, no API key,
-   nothing to configure. It's a deterministic, rule-based coach (similar
-   in spirit to the quiz scoring above) so the Interview Prep module gives
-   real, specific, actionable feedback out of the box, with or without an
-   AI model ever getting wired in.
-
-   Behavioral questions are scored against the STAR framework (Situation,
-   Action, Result) using pattern matching. Technical questions are scored
-   against a curated `keyTerms` list per question (see the INTERVIEW data
-   above) plus a check for concrete examples/reasoning.
-
-   TO SWAP IN A REAL AI MODEL LATER: replace the body of getFeedback()
-   below with a fetch() to your model/API endpoint (passing the question
-   text and `answer`), and render its response instead of calling
-   buildBehavioralFeedback()/buildTechnicalFeedback(). Everything else
-   (the panel, the "Show Model Answer" comparison, the UI) stays the same.
+   Supported Chrome browsers use the built-in Prompt API (Gemini Nano), so
+   answers are evaluated locally on the user's device with no API key or
+   server. Other browsers automatically use the deterministic coach below.
    ========================================================================= */
-function getFeedback(i){
-  const q = INTERVIEW[currentInterviewPath][currentInterviewType][i];
+async function updateChromeAIStatus(){
+  const el = document.getElementById('aiMode');
+  if(!el) return;
+  if(typeof LanguageModel === 'undefined'){
+    el.textContent = 'Rule-based coach ready · Chrome AI is unavailable here';
+    return;
+  }
+  try{
+    const availability = await LanguageModel.availability(CHROME_AI_OPTIONS);
+    if(!document.body.contains(el)) return;
+    const labels = {
+      available:'Chrome AI ready · runs privately on this device',
+      downloadable:'Chrome AI available · model downloads on first use',
+      downloading:'Chrome AI model is downloading',
+      unavailable:'Rule-based coach ready · this device cannot run Chrome AI'
+    };
+    el.textContent = labels[availability] || `Chrome AI status: ${availability}`;
+  }catch(error){
+    el.textContent = 'Rule-based coach ready · Chrome AI check failed';
+  }
+}
+
+async function getFeedback(i){
+  const pathId = currentInterviewPath;
+  const questionType = currentInterviewType;
+  const q = INTERVIEW[pathId][questionType][i];
   const box = document.getElementById('answerBox');
   const panel = document.getElementById('feedbackPanel');
   const body = document.getElementById('feedbackBody');
+  const button = document.getElementById('feedbackButton');
   const answer = box.value.trim();
   panel.classList.add('show');
 
@@ -1330,27 +1357,137 @@ function getFeedback(i){
     return;
   }
 
-  body.innerHTML = '<span class="spinner"></span>Analyzing your answer...';
-  setTimeout(()=>{
-    const result = currentInterviewType==='behavioral'
+  button.disabled = true;
+  body.innerHTML = '<span class="spinner"></span>Checking for private on-device AI...';
+
+  try{
+    const result = await buildChromeAIFeedback(answer, q, pathId, questionType, status=>{
+      if(document.body.contains(body)) body.innerHTML = `<span class="spinner"></span>${status}`;
+    });
+    if(document.body.contains(body)) body.innerHTML = renderFeedback(result);
+  }catch(error){
+    console.info('Chrome on-device AI unavailable; using rule-based feedback.', error);
+    if(chromeAiSession && typeof chromeAiSession.destroy==='function') chromeAiSession.destroy();
+    chromeAiSession = null;
+    const fallback = questionType==='behavioral'
       ? buildBehavioralFeedback(answer)
       : buildTechnicalFeedback(answer, q);
-    body.innerHTML = renderFeedback(result);
-  }, 450);
+    fallback.source = 'rules';
+    fallback.fallbackReason = 'Chrome on-device AI was unavailable, so the built-in coach answered instantly.';
+    if(document.body.contains(body)) body.innerHTML = renderFeedback(fallback);
+  }finally{
+    if(document.body.contains(button)) button.disabled = false;
+    updateChromeAIStatus();
+  }
 }
 
 function renderFeedback(result){
+  const clean = value => result.source==='chrome-ai' ? escapeHtml(value) : value;
   const goodHtml = result.strengths.length
-    ? `<div class="fb-sub good">&#10003; What's working</div><ul class="fb-good">${result.strengths.map(s=>`<li>${s}</li>`).join('')}</ul>`
+    ? `<div class="fb-sub good">&#10003; What's working</div><ul class="fb-good">${result.strengths.map(s=>`<li>${clean(s)}</li>`).join('')}</ul>`
     : '';
   const improveHtml = result.improvements.length
-    ? `<div class="fb-sub improve">&#9998; What to improve</div><ul class="fb-improve">${result.improvements.map(s=>`<li>${s}</li>`).join('')}</ul>`
+    ? `<div class="fb-sub improve">&#9998; What to improve</div><ul class="fb-improve">${result.improvements.map(s=>`<li>${clean(s)}</li>`).join('')}</ul>`
     : '<div class="fb-sub improve">&#9998; What to improve</div><ul class="fb-improve"><li>Nothing major &mdash; this hits the key elements interviewers look for. Compare it against the model answer for extra polish.</li></ul>';
+  const summaryHtml = result.summary ? `<p class="ai-summary">${clean(result.summary)}</p>` : '';
+  const note = result.source==='chrome-ai'
+    ? `${result.wordCount} words &middot; personalized by Gemini Nano running privately on this device through Chrome's built-in Prompt API.`
+    : `${result.wordCount} words &middot; ${result.fallbackReason || 'feedback generated by the rule-based coach built into this page.'}`;
   return `
+    ${summaryHtml}
     ${goodHtml}
     ${improveHtml}
-    <div class="fb-note">${result.wordCount} words &middot; feedback generated by a rule-based checker built into this page (see <code>getFeedback()</code> in the source) &mdash; not an AI model.</div>
+    <div class="fb-note">${note}</div>
   `;
+}
+
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g, char=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+  })[char]);
+}
+
+async function buildChromeAIFeedback(answer, question, pathId, questionType, onStatus){
+  if(typeof LanguageModel === 'undefined') throw new Error('Prompt API is not supported');
+
+  const availability = await LanguageModel.availability(CHROME_AI_OPTIONS);
+  if(availability==='unavailable') throw new Error('Prompt API is unavailable on this device');
+
+  if(!chromeAiSession){
+    onStatus(availability==='available'
+      ? 'Starting Chrome on-device AI...'
+      : 'Downloading Chrome\'s on-device AI model...');
+    chromeAiSession = await LanguageModel.create({
+      ...CHROME_AI_OPTIONS,
+      initialPrompts:[{
+        role:'system',
+        content:'You are a concise, encouraging interview coach for undergraduate Information Systems students. Give specific, constructively critical feedback grounded in the exact question and answer. Never invent accomplishments for the candidate.'
+      }],
+      monitor(monitor){
+        monitor.addEventListener('downloadprogress', event=>{
+          const percent = Math.round(event.loaded*100);
+          onStatus(`Downloading Chrome's on-device AI model... ${percent}%`);
+        });
+      }
+    });
+  }
+
+  onStatus('Chrome AI is analyzing your answer privately on this device...');
+  const path = PATH_MAP[pathId];
+  const wordCount = answer.split(/\s+/).filter(Boolean).length;
+  const schema = {
+    type:'object',
+    properties:{
+      summary:{type:'string'},
+      strengths:{type:'array',items:{type:'string'},minItems:1,maxItems:3},
+      improvements:{type:'array',items:{type:'string'},minItems:1,maxItems:3}
+    },
+    required:['summary','strengths','improvements'],
+    additionalProperties:false
+  };
+  const prompt = `
+Career: ${path.name}
+Question type: ${questionType}
+Interview question: ${question.q}
+Candidate answer: ${answer}
+Reference answer: ${question.model}
+${question.keyTerms ? `Important technical concepts: ${question.keyTerms.join(', ')}` : ''}
+
+Evaluate how directly the candidate answered this exact question. For behavioral questions, use STAR only where it fits the question. For technical questions, evaluate correctness, reasoning, and examples. Write a one-sentence summary, 1-3 concrete strengths, and 1-3 concrete improvements. Keep every item concise and address the candidate as "you".
+  `.trim();
+
+  let raw;
+  try{
+    raw = await chromeAiSession.prompt(prompt, {
+      responseConstraint:schema,
+      omitResponseConstraintInput:true
+    });
+  }catch(error){
+    raw = await chromeAiSession.prompt(`${prompt}\nReturn only valid JSON matching this shape: {"summary":"...","strengths":["..."],"improvements":["..."]}.`);
+  }
+
+  const data = parseChromeAIResponse(raw);
+  return {
+    summary:data.summary,
+    strengths:data.strengths.slice(0,3),
+    improvements:data.improvements.slice(0,3),
+    wordCount,
+    source:'chrome-ai'
+  };
+}
+
+function parseChromeAIResponse(raw){
+  const cleaned = String(raw).trim().replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'');
+  const data = JSON.parse(cleaned);
+  if(typeof data.summary!=='string' || !Array.isArray(data.strengths) || !Array.isArray(data.improvements)){
+    throw new Error('Chrome AI returned an unexpected response');
+  }
+  data.strengths = data.strengths.filter(item=>typeof item==='string' && item.trim());
+  data.improvements = data.improvements.filter(item=>typeof item==='string' && item.trim());
+  if(!data.strengths.length || !data.improvements.length){
+    throw new Error('Chrome AI feedback was incomplete');
+  }
+  return data;
 }
 
 function buildBehavioralFeedback(text){
